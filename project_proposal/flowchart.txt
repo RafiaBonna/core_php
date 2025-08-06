@@ -1,0 +1,24 @@
+[Start]
+
+    ↓
+[Admin Login / Manager Login]
+
+    ↓
+[Dashboard Access]
+ ├──> [Customer Registration]
+ ├──> [Add Product to Stock] 
+ │       └──> via [Purchase Order → purchase_items → stock]
+ ├──> [View/Edit Vendors, Categories]
+ ├──> [Sell Product]
+ │       └──> [sales → sale_items → stock (update quantity)]
+ ├──> [Return Handling]
+ │       └──> [return_items → stock (increase quantity)]
+ ├──> [Purchase Return]
+ │       └──> [purchase_return → stock (decrease quantity)]
+ └──> [Track Expired Products]
+
+    ↓
+[Reports / Logs / View Sales / Purchase Summary]
+
+    ↓
+[End]
