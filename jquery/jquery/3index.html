@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+       .first_try{
+            background-color: rgb(174, 163, 233);
+            width: 30%;
+            height: 60px;
+            padding: 20px;
+            margin-bottom: 10px;
+        }
+        .second_try{
+            background-color: rgb(220, 143, 243);
+            width: 30%;
+            height: 30px;
+            padding: 20px;
+            margin-top: 10px;
+
+        }
+    </style>
+</head>
+<body>
+    <p class="first_try">Lorem ipsum dolor sit amet consectetur adipisicing elit.
+         Optio eos reprehenderit voluptatum blanditiis tempore aperiam, 
+         nisi possimus, sequi nam pariatur soluta,
+         doloremque a maxime non cumque eius magnam atque sit.</p> <br>
+         <h1 class="second_try">Hello Barisal</h1>
+         <button id="h">Click here to hide</button>
+         <button id="s">Click here to show</button>
+         <button id="t">Click here to toggle</button>
+          <script src="jquery.js"></script>
+         <script>
+            $(document).ready(function(){
+                $("#h").click(function(){
+                    $("h1").hide(5000);
+                });
+                 $("#s").click(function(){
+                    $("h1").show(5000);
+                    });
+            });
+               $(document).ready(function(){
+                $("#t").click(function(){
+                    $("h1").toggle(5000);
+                       });
+                });
+         </script>
+</body>
+</html>

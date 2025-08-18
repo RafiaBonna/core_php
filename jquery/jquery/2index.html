@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hide Show Example</title>
+    <style>
+        .first_try{
+            background-color: rgb(85, 163, 231);
+            width: 100%;
+            height: 30px;
+            padding: 20px;
+            margin-bottom: 10px;
+        }
+        .second_try{
+            background-color: rgb(220, 143, 243);
+            width: 100%;
+            height: 30px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+        button{
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: teal;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover{
+            background-color: darkslategray;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="first_try"></div>
+    <div class="second_try"></div>
+    <h1>Hello World</h1>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem, saepe reiciendis accusamus ratione perferendis, dicta qui dignissimos perspiciatis commodi dolore, suscipit pariatur et inventore aliquid molestias odio unde rerum quaerat!</p>
+
+    <!-- বোতাম -->
+    <button id="hideBtn">Hide</button>
+    <button id="showBtn">Show</button>
+    <button id="toggleBtn">Toggle</button>
+
+    <script src="jquery.js"></script>
+
+    <script>
+        // পেজ লোড হওয়ার ৩ সেকেন্ড পরে সব কিছু লুকাবে
+        setTimeout(function(){
+            $('*').hide(2000); // ২ সেকেন্ডে ধীরে ধীরে লুকাবে
+        }, 3000);
+
+        // Hide বোতাম
+        $('#hideBtn').click(function(){
+            $('*').hide(2000);
+        });
+
+        // Show বোতাম
+        $('#showBtn').click(function(){
+            $('*').show(2000);
+        });
+
+        // Toggle বোতাম (লুকানো থাকলে দেখাবে, দেখা থাকলে লুকাবে)
+        $('#toggleBtn').click(function(){
+            $('*').toggle(2000);
+        });
+    </script>
+
+</body>
+</html>

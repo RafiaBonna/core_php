@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+<body>
+    <div id="one"></div>
+    <div class="two"></div>
+    <div class="three"></div>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, voluptatem.first</p>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, voluptatem</p>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, voluptatem</p>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, voluptatem</p>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, voluptatem</p>
+    <h1>Hello Noakhali</h1>
+    <button id="h">Click here for hide</button>
+    <button id="s">Click here for show </button>
+    <button id="t">Click here for toggle</button>
+    <script src="jquery.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#h").click(function(){
+                $("p:first").hide(4000);
+            });
+             $("#s").click(function(){
+                $("p").show(5000);
+            });
+        });
+
+
+         $(document).ready(function(){
+            $("#t").click(function(){
+                $("h1").toggle(4000);
+            });
+            });
+    </script>
+</body>
+</html>
