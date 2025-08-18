@@ -35,112 +35,146 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Verify the hashed password
             if (password_verify($password, $user['password_hash'])) {
-                // Password is correct, start a session
+                // Password is correct, store user data in session
                 $_SESSION['user_id'] = $user['id'];
-                $_SESSION['full_name'] = $user['full_name'];
-                $_SESSION['email'] = $user['email'];
-                $_SESSION['role_id'] = $user['role_id'];
-                $_SESSION['role_name'] = $user['role_name'];
+                $_SESSION['user_name'] = $user['full_name'];
+                $_SESSION['user_role'] = $user['role_name'];
 
-                // Redirect to the dashboard
+                // Redirect to home page
                 header('Location: home.php');
                 exit;
             } else {
-                // Incorrect password
                 $error = 'Invalid email or password.';
             }
         } else {
-            // User with that email does not exist
             $error = 'Invalid email or password.';
         }
-
-        $stmt->close();
     }
 }
-$conn->close();
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AdminLTE 3 | Log in</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AdminLTE 3 | Log in</title>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <link rel="stylesheet" href="dist/dist/plugins/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="dist/dist/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
-    <link rel="stylesheet" href="dist/dist/css/adminlte.min.css">
-    <style>
-        .login-box {
-            width: 400px !important;
-        }
-    </style>
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="dist/plugins/fontawesome-free/css/all.min.css">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="dist/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="dist/dist/css/adminlte.min.css">
+
+  <!-- Custom CSS for border, border-radius, and text color -->
+  <style>
+    .card {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+    }
+    .form-control {
+      /* Set the text color to black and use !important to override AdminLTE dark mode style */
+      color: #000 !important;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 5px;
+    }
+    /* This rule specifically targets the autofilled text color for WebKit browsers */
+    .form-control:-webkit-autofill,
+    .form-control:-webkit-autofill:hover,
+    .form-control:-webkit-autofill:focus,
+    .form-control:-webkit-autofill:active {
+      -webkit-text-fill-color: #000 !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+    .input-group-text {
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-left: none; /* Remove left border to match input field */
+      border-radius: 0 5px 5px 0;
+    }
+    .btn {
+      border-radius: 5px;
+    }
+  </style>
+
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page dark-mode">
 <div class="login-box">
-    <div class="card card-outline card-primary">
-        <div class="card-header text-center">
-            <a href="#" class="h1"><b>POS</b>System</a>
-        </div>
-        <div class="card-body">
-            <p class="login-box-msg">Sign in to start your session</p>
-
-            <?php if (!empty($error)): ?>
-                <div class="alert alert-danger" role="alert">
-                    <?php echo $error; ?>
-                </div>
-            <?php endif; ?>
-
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                <div class="input-group mb-3">
-                    <input type="email" class="form-control" placeholder="Email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-envelope"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="input-group mb-3">
-                    <input type="password" class="form-control" placeholder="Password" name="password" required>
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-lock"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-8">
-                        <div class="icheck-primary">
-                            <input type="checkbox" id="remember">
-                            <label for="remember">Remember Me</label>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
-                    </div>
-                    </div>
-            </form>
-
-            <div class="social-auth-links text-center mt-2 mb-3">
-                <a href="#" class="btn btn-block btn-primary">
-                    <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
-                </a>
-                <a href="#" class="btn btn-block btn-danger">
-                    <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
-                </a>
-            </div>
-            <p class="mb-1">
-                <a href="#">I forgot my password</a>
-            </p>
-            <p class="mb-0">
-                <a href="register.php" class="text-center">Register a new membership</a>
-            </p>
-        </div>
-        </div>
+  <!-- /.login-logo -->
+  <div class="card card-outline card-primary">
+    <div class="card-header text-center">
+      <a href="dist/index2.html" class="h1"><b>Admin</b>LTE</a>
     </div>
-<script src="dist/dist/plugins/jquery/jquery.min.js"></script>
-<script src="dist/dist/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <div class="card-body">
+      <p class="login-box-msg">Sign in to start your session</p>
+      
+      <?php if ($error): ?>
+          <div class="alert alert-danger"><?php echo $error; ?></div>
+      <?php endif; ?>
+
+      <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+        <div class="input-group mb-3">
+          <input type="email" class="form-control" placeholder="Email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" placeholder="Password" name="password" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <div class="icheck-primary">
+              <input type="checkbox" id="remember">
+              <label for="remember">
+                Remember Me
+              </label>
+            </div>
+          </div>
+          <!-- /.col -->
+          <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+
+      <div class="social-auth-links text-center mt-2 mb-3">
+        <a href="#" class="btn btn-block btn-primary">
+          <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
+        </a>
+        <a href="#" class="btn btn-block btn-danger">
+          <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
+        </a>
+      </div>
+      <!-- /.social-auth-links -->
+
+      <p class="mb-1">
+        <a href="forgot-password.html">I forgot my password</a>
+      </p>
+      <p class="mb-0">
+        <a href="register.html" class="text-center">Register a new membership</a>
+      </p>
+    </div>
+    <!-- /.card-body -->
+  </div>
+  <!-- /.card -->
+</div>
+<!-- /.login-box -->
+
+<!-- jQuery -->
+<script src="dist/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="dist/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
 <script src="dist/dist/js/adminlte.min.js"></script>
 </body>
 </html>
