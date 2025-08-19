@@ -78,7 +78,7 @@
   <section class="py-5 bg-light">
     <div class="container text-center">
       <h2 class="fw-bold">Key Features</h2>
-      <p class="text-muted">Why businesses choose MyPOS</p>
+      <p class="text-muted">Why businesses choose DREAM POS</p>
       <div class="row mt-4">
         <div class="col-md-4">
           <div class="feature-icon">📊</div>
@@ -102,7 +102,7 @@
   <!-- Benefits -->
   <section class="py-5">
     <div class="container text-center">
-      <h2 class="fw-bold">Why Choose MyPOS</h2>
+      <h2 class="fw-bold">Why Choose DREAM POS</h2>
       <div class="row mt-4">
         <div class="col-md-4">
           <h5>Automate Inventory</h5>
@@ -196,7 +196,7 @@
 
   <!-- Footer -->
   <footer class="footer">
-    &copy; 2025 MyPOS Software. All rights reserved. Developed by Rafia Hawlader Bonna
+    &copy; 2025 <b>DREAM POS Software. All rights reserved. Developed by Rafia Hawlader Bonna
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

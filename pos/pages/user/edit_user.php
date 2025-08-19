@@ -1,10 +1,10 @@
 <?php
 
-  // যেহেতু placholder.php ফাইলটি edit_user.php ফাইলকে কল করছে,
-  // এবং placholder.php ও config.php একই ফোল্ডারে আছে, তাই এই Pathটি সঠিক।
+  // Since placholder.php calls the edit_user.php file,
+  // and both placholder.php and config.php are in the same folder, this path is correct.
   require_once 'config.php';
 
-  // ভেরিয়েবলগুলোকে ইনিশিয়ালাইজ করা হয়েছে যাতে 'Undefined variable' ত্রুটি না আসে।
+  // The variables are initialized to prevent 'Undefined variable' errors.
   $fname = "";
   $lname = "";
   $email = "";
@@ -12,7 +12,7 @@
   $id = "";
   $r = ""; // Variable to hold the success or error message
 
-  // এই ব্লকটি ফর্ম সাবমিট করার পর রান করবে
+  // This block runs after the form is submitted.
   if(isset($_POST["btnUpdate"])){
 	  
 	  $id=$_POST["id"];	  
@@ -21,8 +21,8 @@
 	  $email=$_POST["mail"];
 	  $password=$_POST["role"];
 	  
-	  // SQL Injection প্রতিরোধের জন্য Prepared Statement ব্যবহার করা হয়েছে
-      // ডাটাবেজের সঠিক কলামের নাম ব্যবহার করা হয়েছে: full_name, username, email, এবং role_id
+	  // Prepared Statement is used to prevent SQL Injection.
+      // The correct database column names are used: full_name, username, email, and role_id.
 	  $stmt = $conn->prepare("UPDATE users SET full_name=?, username=?, email=?, role_id=? WHERE id=?");
       $stmt->bind_param("sssii", $fname, $lname, $email, $password, $id);
 
@@ -34,12 +34,12 @@
       $stmt->close();
   }
   
-  // এই ব্লকটি যখন কোনো ব্যবহারকারীর তথ্য এডিট করতে চাওয়া হয় তখন রান করবে
-  // এবং URL এ ?id=123 (GET request) থাকলে এই কোড রান করবে।
+  // This block runs when a user's information is requested for editing.
+  // This code will run if there is "?id=123" (GET request) in the URL.
   else if(isset($_GET["id"])){
 	  $id=$_GET["id"];
 	  
-	  // এখানেও Prepared Statement ব্যবহার করা হয়েছে এবং ডাটাবেজের সঠিক কলাম সিলেক্ট করা হয়েছে
+	  // Prepared Statement is also used here and the correct database columns are selected.
 	  $stmt = $conn->prepare("SELECT full_name, username, email, role_id FROM users WHERE id=?");
       $stmt->bind_param("i", $id);
       $stmt->execute();
@@ -89,7 +89,7 @@
         <div class="card-body">
         <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title">Quick Example</h3>
+                <h3 class="card-title">Edit Information</h3>
               </div>
               </div>
   <div class="ftitle text-center"> 

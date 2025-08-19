@@ -15,7 +15,7 @@ $result = $conn->query($sql);
             <tr>
                 <th>ID</th>
                 <th>Product Name</th>
-                <th>Price</th>
+                <th>Total Price</th>
                 <th>Stock</th>
                 <th>Category</th>
                 <th>Action</th>
