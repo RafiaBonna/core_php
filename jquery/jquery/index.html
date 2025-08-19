@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="box" style="height: 300px; width: 400px; text-align: center; margin: 30px auto;"></div>
+    <h1 style="text-align: center; margin: 30px auto;"></h1>
+  <script src="jquery.js"></script>  
+  <script>
+    $(function(){
+        var colors=[
+            {bgColor:"red"},
+            {bgColor:"red",fontColor:"White"},
+            {bgColor:"blue",fontColor:"White"},
+            {bgColor:"black",fontColor:"White"},
+            {bgColor:"pink",fontColor:"White"},
+            {bgColor:"yellow",fontColor:"White"},
+            {bgColor:"violet",fontColor:"White"},
+            {bgColor:"green",fontColor:"White"}];
+            i=0;
+            setInterval(function(){
+                $(".box").css({backgroundColor:colors[i].bgColor,color:colors[i].fontColor}).html("<h1>"+colors[i++].bgColor+"</h1>");
+                if(i>colors.length-1)i=0;
+            },500);
+           
+    })
+  </script>
+</body>
+</html>
