@@ -19,12 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($category_name) {
         $stmt = $conn->prepare("INSERT INTO categories (category_name, parent_id) VALUES (?, ?)");
 
-        if (empty($parent_id)) {
-            $null_parent_id = NULL; // Variable created for bind_param
-            $stmt->bind_param("si", $category_name, $null_parent_id);
-        } else {
-            $stmt->bind_param("si", $category_name, $parent_id);
-        }
+      if (empty($parent_id)) {
+    // If parent_id is empty, insert NULL directly into the SQL query
+    $stmt = $conn->prepare("INSERT INTO categories (category_name, parent_id) VALUES (?, NULL)");
+    $stmt->bind_param("s", $category_name);
+} else {
+    // If parent_id is not empty, use the standard prepared statement with 'si'
+    $stmt = $conn->prepare("INSERT INTO categories (category_name, parent_id) VALUES (?, ?)");
+    $stmt->bind_param("si", $category_name, $parent_id);
+}
 
         if ($stmt->execute()) {
             $success = "New category added successfully!";
