@@ -1,7 +1,7 @@
 <?php
 include __DIR__ . '/../../config.php';
 
-$product_name = $price = $stock = $category_id = $id = '';
+$product_name = $price = $stock = $category_id = $id = $expiry_date = '';
 $message = "";
 
 $categories = [];
@@ -17,10 +17,11 @@ if (isset($_POST["btnUpdate"])) {
     $price = trim($_POST["price"]);
     $stock = trim($_POST["stock"]);
     $category_id = trim($_POST["category_id"]);
+    $expiry_date = empty($_POST['expiry_date']) ? NULL : $_POST['expiry_date'];
 
     if ($product_name && $price && $stock && $category_id) {
-        $stmt = $conn->prepare("UPDATE products SET product_name=?, price=?, stock=?, category_id=? WHERE id=?");
-        $stmt->bind_param("sdiii", $product_name, $price, $stock, $category_id, $id);
+        $stmt = $conn->prepare("UPDATE products SET product_name=?, price=?, stock=?, category_id=?, expiry_date=? WHERE id=?");
+        $stmt->bind_param("sdiisi", $product_name, $price, $stock, $category_id, $expiry_date, $id);
 
         if ($stmt->execute()) {
             $message = "Product updated successfully!";
@@ -33,7 +34,7 @@ if (isset($_POST["btnUpdate"])) {
     }
 } else if (isset($_GET["id"])) {
     $id = intval($_GET["id"]);
-    $stmt = $conn->prepare("SELECT product_name, price, stock, category_id FROM products WHERE id=?");
+    $stmt = $conn->prepare("SELECT product_name, price, stock, category_id, expiry_date FROM products WHERE id=?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -44,6 +45,7 @@ if (isset($_POST["btnUpdate"])) {
         $price = $row['price'];
         $stock = $row['stock'];
         $category_id = $row['category_id'];
+        $expiry_date = $row['expiry_date'];
     } else {
         $message = "No product found with that ID.";
     }
@@ -71,6 +73,10 @@ if (isset($_POST["btnUpdate"])) {
         <div class="form-group">
             <label for="stock">Stock</label>
             <input type="number" class="form-control" id="stock" name="stock" value="<?php echo htmlspecialchars($stock); ?>">
+        </div>
+        <div class="form-group">
+            <label for="expiry_date">Expiry Date</label>
+            <input type="date" class="form-control" id="expiry_date" name="expiry_date" value="<?php echo htmlspecialchars($expiry_date); ?>">
         </div>
         <div class="form-group">
             <label for="category_id">Category</label>

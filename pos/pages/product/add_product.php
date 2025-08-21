@@ -3,7 +3,7 @@ include __DIR__ . '/../../config.php';
 
 $error = '';
 $success = '';
-$product_name = $price = $stock = $category_id = '';
+$product_name = $price = $stock = $category_id = $expiry_date = '';
 
 $categories = [];
 $cat_sql = "SELECT id, category_name FROM categories";
@@ -17,14 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $price = trim($_POST['price']);
     $stock = trim($_POST['stock']);
     $category_id = trim($_POST['category_id']);
+    $expiry_date = empty($_POST['expiry_date']) ? NULL : $_POST['expiry_date'];
 
     if ($product_name && $price && $stock && $category_id) {
-        $stmt = $conn->prepare("INSERT INTO products (product_name, price, stock, category_id) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("sdii", $product_name, $price, $stock, $category_id);
+        $stmt = $conn->prepare("INSERT INTO products (product_name, price, stock, category_id, expiry_date) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sdiis", $product_name, $price, $stock, $category_id, $expiry_date);
 
         if ($stmt->execute()) {
             $success = "New product added successfully!";
-            $product_name = $price = $stock = $category_id = '';
+            $product_name = $price = $stock = $category_id = $expiry_date = '';
         } else {
             $error = $stmt->error;
         }
@@ -43,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="text" name="product_name" placeholder="Product Name" class="form-control mb-2" value="<?php echo htmlspecialchars($product_name); ?>" required>
         <input type="number" name="price" step="0.01" placeholder="Price" class="form-control mb-2" value="<?php echo htmlspecialchars($price); ?>" required>
         <input type="number" name="stock" placeholder="Stock" class="form-control mb-2" value="<?php echo htmlspecialchars($stock); ?>" required>
+        <input type="date" name="expiry_date" placeholder="Expiry Date" class="form-control mb-2" value="<?php echo htmlspecialchars($expiry_date); ?>">
         <select name="category_id" class="form-select mb-2" required>
             <option value="">Select Category</option>
             <?php foreach ($categories as $cat): ?>

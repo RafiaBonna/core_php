@@ -36,11 +36,13 @@ switch ($page) {
     case "9":
         include __DIR__ . '/pages/product/edit_product.php';
         break;
+    case "10":
+        include __DIR__ . '/pages/product/expired_products.php';
+        break;
     case "dashboard":
         include __DIR__ . '/dashboard.php';
         break;
     default:
-        // This case handles any invalid page numbers.
         echo "<h4 class='text-center mt-5'>Page not found!</h4>";
         break;
 }
