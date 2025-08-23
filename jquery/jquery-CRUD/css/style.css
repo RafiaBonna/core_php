@@ -36,7 +36,7 @@ form input:focus {
 }
 
 form input[type="button"] {
-    padding: 8px 8px;
+    padding: 8px 10px;
     margin: 15px;
     border: none;
     border-radius: 6px;
