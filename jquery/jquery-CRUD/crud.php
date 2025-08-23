@@ -15,8 +15,8 @@ $db = new mysqli('localhost','root','','jquery_evidence');
   
 <span class="result"></span>
 <form>
-	<div> ID: <br />
-	<input type="text" name="id" id="id" value="" placeholder="id">
+	<!-- <div> ID: <br />
+	<input type="text" name="id" id="id" value="" placeholder="id"> -->
 	<div> Full Name: <br />
 		<input type="text" name="fullname" id="fullname" placeholder="Enter full name">
 	</div>
