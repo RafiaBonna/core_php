@@ -28,16 +28,28 @@ switch ($page) {
         include __DIR__ . '/pages/category/edit_category.php';
         break;
     case "7":
-        include __DIR__ . '/pages/product/add_product.php';
+        include __DIR__ . '/pages/product/product.php';
         break;
     case "8":
-        include __DIR__ . '/pages/product/manage_product.php';
+        include __DIR__ . '/pages/vendor/manage_vendor.php'; // New Case for Vendors
         break;
-    case "9":
-        include __DIR__ . '/pages/product/edit_product.php';
+    case "reports_sales":
+        include __DIR__ . '/pages/reports/sales_report.php';
         break;
-    case "10":
-        include __DIR__ . '/pages/product/expired_products.php';
+    case "reports_purchase":
+        include __DIR__ . '/pages/reports/purchase_report.php';
+        break;
+    case "reports_inventory":
+        include __DIR__ . '/pages/reports/inventory_report.php';
+        break;
+    case "reports_profit":
+        include __DIR__ . '/pages/reports/profit_report.php';
+        break;
+    case "reports_customers":
+        include __DIR__ . '/pages/reports/customers_report.php';
+        break;
+    case "reports_vendors":
+        include __DIR__ . '/pages/reports/vendors_report.php';
         break;
     case "11":
         include __DIR__ . '/pages/inventory/stock.php';
