@@ -39,6 +39,9 @@ switch ($page) {
     case "10":
         include __DIR__ . '/pages/product/expired_products.php';
         break;
+    case "11":
+        include __DIR__ . '/pages/inventory/stock.php';
+        break;
     case "dashboard":
         include __DIR__ . '/dashboard.php';
         break;
