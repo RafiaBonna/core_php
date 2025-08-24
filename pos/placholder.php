@@ -28,10 +28,13 @@ switch ($page) {
         include __DIR__ . '/pages/category/edit_category.php';
         break;
     case "7":
-        include __DIR__ . '/pages/product/product.php';
+        include __DIR__ . '/pages/product/product.php'; // Combined Add/Manage Product Page
         break;
     case "8":
-        include __DIR__ . '/pages/vendor/manage_vendor.php'; // New Case for Vendors
+        include __DIR__ . '/pages/vendor/manage_vendor.php'; // Vendor Page
+        break;
+    case "9":
+        include __DIR__ . '/pages/product/edit_product.php'; // New case for editing a product
         break;
     case "reports_sales":
         include __DIR__ . '/pages/reports/sales_report.php';
@@ -50,9 +53,6 @@ switch ($page) {
         break;
     case "reports_vendors":
         include __DIR__ . '/pages/reports/vendors_report.php';
-        break;
-    case "11":
-        include __DIR__ . '/pages/inventory/stock.php';
         break;
     case "dashboard":
         include __DIR__ . '/dashboard.php';
