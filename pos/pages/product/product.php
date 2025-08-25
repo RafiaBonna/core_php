@@ -2,7 +2,7 @@
 // Include the database connection file
 include_once __DIR__ . '/../../config.php';
 
-// Check if the form has been submitted to add a new product
+// Handle adding a new product
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     
     // Get and sanitize form data
@@ -20,7 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     
     // Prepare and bind parameters to prevent SQL injection
     $stmt = $conn->prepare($sql_insert);
-    $stmt->bind_param("siidddsi", $product_name, $category_id, $quantity, $purchase_price, $sale_price, $manufacture_date, $expiry_date, $vendor_id);
+    // Corrected bind_param string to match 8 variables: string, int, int, double, double, string, string, int
+    $stmt->bind_param("siiddssi", $product_name, $category_id, $quantity, $purchase_price, $sale_price, $manufacture_date, $expiry_date, $vendor_id);
 
     if ($stmt->execute()) {
         echo "<div class='alert alert-success'>Product added successfully!</div>";
@@ -30,6 +31,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
 
     $stmt->close();
 }
+
+// Handle deleting a product
+if (isset($_GET['delete_id'])) {
+    $delete_id = mysqli_real_escape_string($conn, $_GET['delete_id']);
+
+    $sql_delete = "DELETE FROM stock WHERE id = ?";
+    $stmt_delete = $conn->prepare($sql_delete);
+    $stmt_delete->bind_param("i", $delete_id);
+
+    if ($stmt_delete->execute()) {
+        echo "<div class='alert alert-success'>Product deleted successfully!</div>";
+    } else {
+        echo "<div class='alert alert-danger'>Error deleting product: " . $stmt_delete->error . "</div>";
+    }
+    $stmt_delete->close();
+}
+
 
 // Fetch all vendors from the database to populate the dropdown
 $sql_vendors = "SELECT id, name FROM vendors ORDER BY name ASC";
@@ -42,7 +60,7 @@ if ($result_vendors->num_rows > 0) {
 }
 
 // Fetch all product categories to populate the dropdown
-$sql_categories = "SELECT id, category_name FROM product_categories ORDER BY category_name ASC";
+$sql_categories = "SELECT id, category_name FROM categories ORDER BY category_name ASC";
 $result_categories = $conn->query($sql_categories);
 $categories = [];
 if ($result_categories->num_rows > 0) {
@@ -52,7 +70,7 @@ if ($result_categories->num_rows > 0) {
 }
 
 // Fetch all products from the database to display in the table
-$sql_products = "SELECT s.id, s.product_name, s.quantity, s.sale_price, pc.category_name, v.name AS vendor_name FROM stock AS s LEFT JOIN product_categories AS pc ON s.product_category_id = pc.id LEFT JOIN vendors AS v ON s.vendor_id = v.id ORDER BY s.id DESC";
+$sql_products = "SELECT s.id, s.product_name, s.quantity, s.sale_price, s.purchase_price, pc.category_name, v.name AS vendor_name, s.manufacture_date, s.expiry_date FROM stock AS s LEFT JOIN product_categories AS pc ON s.product_category_id = pc.id LEFT JOIN vendors AS v ON s.vendor_id = v.id ORDER BY s.id DESC";
 $result_products = $conn->query($sql_products);
 $products = [];
 if ($result_products->num_rows > 0) {
@@ -136,6 +154,7 @@ if ($result_products->num_rows > 0) {
                             <th>Category</th>
                             <th>Vendor</th>
                             <th>Quantity</th>
+                            <th>Purchase Price</th>
                             <th>Sale Price</th>
                             <th>Actions</th>
                         </tr>
@@ -149,16 +168,17 @@ if ($result_products->num_rows > 0) {
                                     <td><?php echo htmlspecialchars($product['category_name']); ?></td>
                                     <td><?php echo htmlspecialchars($product['vendor_name']); ?></td>
                                     <td><?php echo htmlspecialchars($product['quantity']); ?></td>
+                                    <td><?php echo htmlspecialchars($product['purchase_price']); ?></td>
                                     <td><?php echo htmlspecialchars($product['sale_price']); ?></td>
                                     <td class="d-flex justify-content-center">
-                                        <a href="home.php?page=9&id=<?php echo $product['id']; ?>" class="btn btn-sm btn-info me-2">Edit</a>
-                                        <a href="pages/product/delete_product.php?id=<?php echo $product['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
+                                        <a href="home.php?page=9&id=<?php echo htmlspecialchars($product['id']); ?>" class="btn btn-sm btn-info me-2">Edit</a>
+                                        <a href="home.php?page=7&delete_id=<?php echo htmlspecialchars($product['id']); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="7" class="text-center">No products found.</td>
+                                <td colspan="8" class="text-center">No products found.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>

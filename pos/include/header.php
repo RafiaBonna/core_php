@@ -15,8 +15,8 @@
   <link rel="stylesheet" href="dist/plugins/daterangepicker/daterangepicker.css">
 
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
-<div class="wrapper">
+<body class="hold-transition sidebar-mini layout-fixed ">
+<div class="wrapper ">
 
   <!-- Preloader -->
   <!-- <div class="preloader flex-column justify-content-center align-items-center">
