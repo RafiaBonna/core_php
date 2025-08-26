@@ -28,15 +28,15 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-item">
-                    <a href="home.php?page=dashboard" class="nav-link">
+                    <a href="home.php?page=dashboard" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
                 </li>
-
+                
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-user"></i>
+                        <i class="nav-icon fas fa-users"></i>
                         <p>
                             Users
                             <i class="right fas fa-angle-left"></i>
@@ -52,39 +52,15 @@
                         <li class="nav-item">
                             <a href="home.php?page=2" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Manage User</p>
+                                <p>Manage Users</p>
                             </a>
                         </li>
                     </ul>
                 </li>
-
+                
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-th"></i>
-                        <p>
-                            Categories
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="home.php?page=4" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Add Category</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="home.php?page=5" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Manage Category</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-shopping-bag"></i>
+                        <i class="nav-icon fas fa-shopping-basket"></i>
                         <p>
                             Products
                             <i class="right fas fa-angle-left"></i>
@@ -94,33 +70,59 @@
                         <li class="nav-item">
                             <a href="home.php?page=7" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Add/Manage Products</p>
+                                <p>Manage Products</p>
                             </a>
                         </li>
                     </ul>
                 </li>
+                
+                <li class="nav-item">
+                    <a href="home.php?page=8" class="nav-link">
+                        <i class="nav-icon fas fa-truck"></i>
+                        <p>Vendors</p>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="home.php?page=10" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>Customers</p>
+                    </a>
+                </li>
 
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-truck"></i>
+                        <i class="nav-icon fas fa-cash-register"></i>
                         <p>
-                            Vendor
+                            Sales
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="home.php?page=8" class="nav-link">
+                            <a href="home.php?page=11" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Manage Vendor</p>
+                                <p>Create Sale</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="home.php?page=12" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Sales History</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="home.php?page=14" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Sales Return</p>
                             </a>
                         </li>
                     </ul>
                 </li>
-
-                <li class="nav-item menu-open">
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-chart-pie"></i>
+                
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-chart-line"></i>
                         <p>
                             Reports
                             <i class="right fas fa-angle-left"></i>
@@ -128,37 +130,25 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="home.php?page=reports_sales" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Sales Report</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="home.php?page=reports_purchase" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Purchase Report</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="home.php?page=reports_inventory" class="nav-link">
+                            <a href="home.php?page=15" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Inventory Report</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="home.php?page=reports_profit" class="nav-link">
+                            <a href="home.php?page=16" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Profit/Loss Report</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="home.php?page=reports_customers" class="nav-link">
+                            <a href="home.php?page=17" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Customers Report</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="home.php?page=reports_vendors" class="nav-link">
+                            <a href="home.php?page=18" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Vendors Report</p>
                             </a>
