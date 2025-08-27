@@ -78,8 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $conn->commit();
-            header("Location: payment1.php?sale_id=$sale_id");
-            exit;
+            // header("Location: sales_history.php?sale_id=$sale_id");
+            // exit;
 
         } catch (Exception $e) {
             $conn->rollback();
