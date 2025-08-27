@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 24, 2025 at 09:54 PM
+-- Generation Time: Aug 27, 2025 at 09:21 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -24,6 +24,28 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `categories`
+--
+
+CREATE TABLE `categories` (
+  `id` int(11) NOT NULL,
+  `category_name` varchar(180) NOT NULL,
+  `parent_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`id`, `category_name`, `parent_id`) VALUES
+(1, 'Electronics', NULL),
+(3, 'Cosmetics', NULL),
+(13, 'Clothing &  Apparel', NULL),
+(14, 'Stationery & office supplies', NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `customers`
 --
 
@@ -37,6 +59,14 @@ CREATE TABLE `customers` (
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `customers`
+--
+
+INSERT INTO `customers` (`id`, `name`, `phone`, `email`, `address`, `created_at`, `updated_at`) VALUES
+(1, 'Helen', '9988776655', 'helen1@gmail.com', 'Dhaka ,Bangladesh', '2025-08-26 10:39:00', '2025-08-26 10:39:00'),
+(2, 'Purno', '56789766', 'purno@gmail.com', 'Dhaka', '2025-08-26 11:46:56', '2025-08-26 11:46:56');
+
 -- --------------------------------------------------------
 
 --
@@ -45,11 +75,38 @@ CREATE TABLE `customers` (
 
 CREATE TABLE `expired_products` (
   `id` int(11) NOT NULL,
-  `stock_id` int(11) NOT NULL,
-  `expired_quantity` int(11) NOT NULL,
-  `expiry_date` date NOT NULL,
-  `created_at` datetime NOT NULL
+  `product_name` varchar(255) NOT NULL,
+  `category` varchar(255) DEFAULT NULL,
+  `current_stock` int(11) DEFAULT NULL,
+  `expiry_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products`
+--
+
+CREATE TABLE `products` (
+  `id` int(11) NOT NULL,
+  `product_name` varchar(255) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `stock` int(11) NOT NULL,
+  `category_id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `expiry_date` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`id`, `product_name`, `price`, `stock`, `category_id`, `created_at`, `updated_at`, `expiry_date`) VALUES
+(1, 'Mobile', 350000.00, 12, 1, '2025-08-18 00:42:41', '2025-08-24 06:00:34', '2025-08-21'),
+(2, 'Tablet', 110000.00, 11, 1, '2025-08-18 00:43:18', '2025-08-24 03:50:30', '2025-08-22'),
+(3, 'Sunscreen', 200000.00, 200, 3, '2025-08-18 13:12:53', '2025-08-24 04:03:16', '2025-08-23'),
+(4, 'Notebook', 60000.00, 300, 9, '2025-08-19 21:26:22', '2025-08-19 21:26:22', '2026-08-10');
 
 -- --------------------------------------------------------
 
@@ -69,11 +126,7 @@ CREATE TABLE `product_categories` (
 
 INSERT INTO `product_categories` (`id`, `category_name`, `parent_id`) VALUES
 (1, 'Electronics', NULL),
-(3, 'Cosmetics', NULL),
-(5, 'Electronics', NULL),
-(6, 'Cosmetics', NULL),
-(7, 'Electronics', NULL),
-(8, 'Cosmetics', NULL);
+(3, 'Cosmetics', NULL);
 
 -- --------------------------------------------------------
 
@@ -166,6 +219,32 @@ CREATE TABLE `sales` (
   `sale_date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `sales`
+--
+
+INSERT INTO `sales` (`id`, `customer_id`, `total_amount`, `sale_date`) VALUES
+(2, 2, 9000.00, '2025-08-27 12:21:59'),
+(3, 2, 100000.00, '2025-08-27 12:23:23'),
+(4, 2, 100000.00, '2025-08-27 12:26:11'),
+(5, 2, 100000.00, '2025-08-27 12:26:30'),
+(6, 2, 100000.00, '2025-08-27 12:27:08'),
+(7, 2, 100000.00, '2025-08-27 12:27:24');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sales_return`
+--
+
+CREATE TABLE `sales_return` (
+  `id` int(11) NOT NULL,
+  `sale_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `quantity_returned` int(11) NOT NULL,
+  `return_date` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -180,6 +259,20 @@ CREATE TABLE `sale_items` (
   `unit_price` decimal(10,2) NOT NULL,
   `total_price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `sale_items`
+--
+
+INSERT INTO `sale_items` (`id`, `sale_id`, `stock_id`, `quantity`, `unit_price`, `total_price`) VALUES
+(1, 0, 1, 1, 100000.00, 100000.00),
+(2, 0, 2, 12, 100000.00, 1200000.00),
+(6, 2, 5, 3, 3000.00, 9000.00),
+(7, 3, 4, 1, 100000.00, 100000.00),
+(8, 4, 4, 1, 100000.00, 100000.00),
+(9, 5, 4, 1, 100000.00, 100000.00),
+(10, 6, 4, 1, 100000.00, 100000.00),
+(11, 7, 4, 1, 100000.00, 100000.00);
 
 -- --------------------------------------------------------
 
@@ -206,8 +299,10 @@ CREATE TABLE `stock` (
 --
 
 INSERT INTO `stock` (`id`, `product_name`, `product_category_id`, `quantity`, `purchase_price`, `sale_price`, `manufacture_date`, `expiry_date`, `vendor_id`, `created_at`, `updated_at`) VALUES
-(1, 'Keyboard', 1, 100, 80000.00, 100000.00, '0000-00-00', '2030-08-20', 1, '2025-08-25 00:55:11', NULL),
-(2, 'Keyboard', 1, 100, 80000.00, 100000.00, '0000-00-00', '2030-08-20', 1, '2025-08-25 01:09:36', NULL);
+(1, 'Keyboard', 1, 99, 80000.00, 100000.00, '0000-00-00', '2030-08-20', 1, '2025-08-25 00:55:11', NULL),
+(2, 'Monitor', 1, 88, 80000.00, 100000.00, '2025-08-08', '2030-08-20', 1, '2025-08-25 01:09:36', '2025-08-25 09:10:39'),
+(4, 'Facewash', 3, 395, 80000.00, 100000.00, '2025-08-25', '2027-06-08', 2, '2025-08-27 09:17:19', NULL),
+(5, 'Foundation', 3, 197, 2000.00, 3000.00, '2025-08-20', '2027-01-12', 2, '2025-08-27 12:21:30', NULL);
 
 -- --------------------------------------------------------
 
@@ -232,11 +327,12 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password_hash`, `full_name`, `email`, `phone`, `role_id`, `created_at`, `updated_at`) VALUES
-(3, 'admin', '$2y$10$b5uWt.B0j6aa87olPJ42a.H0KpHJWdQa1/lxWzEObNCoyK2mLGO6G', 'Administrator', 'admin@gmail.com', '', 1, '2025-08-13 02:39:06.000000', '2025-08-13 02:39:06.000000'),
-(4, 'lucky12', '$2y$10$fJqcEYASjfNKXHrvqtC8VOgaXFXsvBnbA1QrCD0Hd1nni8zLu1HeW', 'Farhana Lucky', 'farhana@gmail.com', '', 1, '2025-08-13 12:03:04.000000', '2025-08-13 12:03:04.000000'),
-(8, 'hawlader', '$2y$10$/v0uOO9ItcfpVwGRpxtFkOIbISQgD4QW.KYjVaxGhlVfCCmAMmApa', 'Bonna', 'bonna@gmail.com', '', 2, '2025-08-13 13:18:50.000000', '2025-08-16 23:05:48.000000'),
-(9, 'Jhorna5678', '$2y$10$TriFnAixDCodzXBVyGpwnu3WoVYbWeMuvPZ2FSVCFnBh/1GplcF3m', 'Jhorna Hawlader', 'joya@gmail.com', '', 2, '2025-08-15 11:42:51.000000', '2025-08-15 11:42:51.000000'),
-(10, 'sharmin234', '$2y$10$1Fnzv6QYHV/Kg4QxZBpKBOd3uS1OrWPjXoDzQivhmu2ffiCr1k1ea', 'Sharmin Akter', 'sharmin@gmail.com', '', 3, '2025-08-16 00:52:47.000000', '2025-08-16 23:20:54.000000');
+(3, 'admin1', '$2y$10$b5uWt.B0j6aa87olPJ42a.H0KpHJWdQa1/lxWzEObNCoyK2mLGO6G', 'Administrator', 'admin@gmail.com', '', 1, '2025-08-13 02:39:06.000000', '2025-08-13 02:39:06.000000'),
+(4, 'lucky123', '$2y$10$fJqcEYASjfNKXHrvqtC8VOgaXFXsvBnbA1QrCD0Hd1nni8zLu1HeW', 'Farhana Lucky', 'farhana@gmail.com', '', 1, '2025-08-13 12:03:04.000000', '2025-08-13 12:03:04.000000'),
+(8, 'hawlader', '$2y$10$/v0uOO9ItcfpVwGRpxtFkOIbISQgD4QW.KYjVaxGhlVfCCmAMmApa', 'rafia', 'rafia@gmail.com', '', 3, '2025-08-13 13:18:50.000000', '2025-08-25 10:35:56.000000'),
+(11, 'mira123', '$2y$10$b/qgeVLFX1/6y/sjUmtwAuwEb8QmoJ6KGxWlaa.OGhtksOC5EFp2K', 'Azmira khatun', 'azmira@gmail.com', '', 3, '2025-08-19 11:37:01.000000', '2025-08-19 11:37:01.000000'),
+(12, 'Shefa333', '$2y$10$REGMwSV4GGl0wShTotME0u43PNZqbXL/TTB1ZICXKf6YQ.7f0p2dG', 'Shefa Hawlader', 'shefa@gmail.com', '', 2, '2025-08-20 09:15:56.000000', '2025-08-20 09:15:56.000000'),
+(13, 'armin', '$2y$10$8R9IFwXZ8d/4CktB.5/kJOIJgEKVfesL1rwLP5ZHJ.qjLUpCS8wPe', 'Sharmin', 'sharu@gmail.com', '', 2, '2025-08-25 10:41:47.000000', '2025-08-25 10:41:47.000000');
 
 -- --------------------------------------------------------
 
@@ -260,11 +356,19 @@ CREATE TABLE `vendors` (
 --
 
 INSERT INTO `vendors` (`id`, `name`, `contact_person`, `phone`, `email`, `address`, `created_at`, `updated_at`) VALUES
-(1, 'Michale', NULL, NULL, NULL, NULL, '0000-00-00 00:00:00', NULL);
+(1, 'Michale', NULL, NULL, NULL, NULL, '0000-00-00 00:00:00', NULL),
+(2, 'Rosella', NULL, NULL, NULL, NULL, '0000-00-00 00:00:00', NULL),
+(4, 'Elvish', NULL, NULL, NULL, NULL, '2025-08-25 09:22:38', NULL);
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `customers`
@@ -276,8 +380,13 @@ ALTER TABLE `customers`
 -- Indexes for table `expired_products`
 --
 ALTER TABLE `expired_products`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `stock_id` (`stock_id`);
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `products`
+--
+ALTER TABLE `products`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `product_categories`
@@ -330,6 +439,14 @@ ALTER TABLE `sales`
   ADD KEY `customer_id` (`customer_id`);
 
 --
+-- Indexes for table `sales_return`
+--
+ALTER TABLE `sales_return`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_sale_product` (`sale_id`,`product_id`),
+  ADD KEY `fk_sales_return_product` (`product_id`);
+
+--
 -- Indexes for table `sale_items`
 --
 ALTER TABLE `sale_items`
@@ -365,16 +482,28 @@ ALTER TABLE `vendors`
 --
 
 --
+-- AUTO_INCREMENT for table `categories`
+--
+ALTER TABLE `categories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `expired_products`
 --
 ALTER TABLE `expired_products`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `products`
+--
+ALTER TABLE `products`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `product_categories`
@@ -416,93 +545,48 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `sales_return`
+--
+ALTER TABLE `sales_return`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `sale_items`
 --
 ALTER TABLE `sale_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `stock`
 --
 ALTER TABLE `stock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `vendors`
 --
 ALTER TABLE `vendors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `expired_products`
+-- Constraints for table `sales_return`
 --
-ALTER TABLE `expired_products`
-  ADD CONSTRAINT `expired_products_ibfk_1` FOREIGN KEY (`stock_id`) REFERENCES `stock` (`id`);
-
---
--- Constraints for table `product_categories`
---
-ALTER TABLE `product_categories`
-  ADD CONSTRAINT `product_categories_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `product_categories` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `purchases`
---
-ALTER TABLE `purchases`
-  ADD CONSTRAINT `purchases_ibfk_1` FOREIGN KEY (`vendor_id`) REFERENCES `vendors` (`id`);
-
---
--- Constraints for table `purchase_items`
---
-ALTER TABLE `purchase_items`
-  ADD CONSTRAINT `purchase_items_ibfk_1` FOREIGN KEY (`purchase_id`) REFERENCES `purchases` (`id`),
-  ADD CONSTRAINT `purchase_items_ibfk_2` FOREIGN KEY (`stock_id`) REFERENCES `stock` (`id`);
-
---
--- Constraints for table `purchase_returns`
---
-ALTER TABLE `purchase_returns`
-  ADD CONSTRAINT `purchase_returns_ibfk_1` FOREIGN KEY (`stock_id`) REFERENCES `stock` (`id`);
-
---
--- Constraints for table `return_items`
---
-ALTER TABLE `return_items`
-  ADD CONSTRAINT `return_items_ibfk_1` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`id`),
-  ADD CONSTRAINT `return_items_ibfk_2` FOREIGN KEY (`stock_id`) REFERENCES `stock` (`id`);
-
---
--- Constraints for table `sales`
---
-ALTER TABLE `sales`
-  ADD CONSTRAINT `sales_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`);
-
---
--- Constraints for table `sale_items`
---
-ALTER TABLE `sale_items`
-  ADD CONSTRAINT `sale_items_ibfk_1` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`id`),
-  ADD CONSTRAINT `sale_items_ibfk_2` FOREIGN KEY (`stock_id`) REFERENCES `stock` (`id`);
-
---
--- Constraints for table `stock`
---
-ALTER TABLE `stock`
-  ADD CONSTRAINT `stock_ibfk_1` FOREIGN KEY (`product_category_id`) REFERENCES `product_categories` (`id`),
-  ADD CONSTRAINT `stock_ibfk_2` FOREIGN KEY (`vendor_id`) REFERENCES `vendors` (`id`);
+ALTER TABLE `sales_return`
+  ADD CONSTRAINT `fk_sales_return_product` FOREIGN KEY (`product_id`) REFERENCES `stock` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_sales_return_sale` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

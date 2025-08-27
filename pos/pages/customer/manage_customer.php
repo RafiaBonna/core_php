@@ -76,10 +76,11 @@ if ($result && $result->num_rows > 0) {
 }
 ?>
 
-<div class="content-wrapper" style="min-height: 1203.6px;">
+
+   <div class="content-fluid" style="min-height: 1000.6px;">
     <div class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row mb-1">
                 <div class="col-sm-6">
                     <h1 class="m-0">Manage Customers</h1>
                 </div>
@@ -92,9 +93,11 @@ if ($result && $result->num_rows > 0) {
             </div>
         </div>
     </div>
+
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-4">
+        <!-- Add Customer Form - Full Width on Top -->
+        <div class="row mb-4">
+            <div class="col-12">
                 <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">Add New Customer</h3>
@@ -123,8 +126,11 @@ if ($result && $result->num_rows > 0) {
                     </div>
                 </div>
             </div>
-            
-            <div class="col-md-8">
+        </div>
+
+        <!-- Customers Table - Full Width Below Form -->
+        <div class="row">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">All Customers</h3>
@@ -144,13 +150,13 @@ if ($result && $result->num_rows > 0) {
                                 <?php if (count($customers) > 0): ?>
                                     <?php foreach ($customers as $customer): ?>
                                         <tr>
-                                            <td class="text-center"><?php echo htmlspecialchars($customer['id']); ?></td>
-                                            <td><?php echo htmlspecialchars($customer['name']); ?></td>
-                                            <td><?php echo htmlspecialchars($customer['email']); ?></td>
-                                            <td><?php echo htmlspecialchars($customer['phone']); ?></td>
+                                            <td class="text-center"><?= htmlspecialchars($customer['id']); ?></td>
+                                            <td><?= htmlspecialchars($customer['name']); ?></td>
+                                            <td><?= htmlspecialchars($customer['email']); ?></td>
+                                            <td><?= htmlspecialchars($customer['phone']); ?></td>
                                             <td class="d-flex justify-content-center">
-                                                <a href="home.php?page=19&id=<?php echo $customer['id']; ?>" class="btn btn-sm btn-primary me-2">Edit</a>
-                                                <a href="home.php?page=10&delete_id=<?php echo $customer['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this customer?');">Delete</a>
+                                                <a href="home.php?page=19&id=<?= $customer['id']; ?>" class="btn btn-sm btn-primary me-2">Edit</a>
+                                                <a href="home.php?page=10&delete_id=<?= $customer['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this customer?');">Delete</a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
