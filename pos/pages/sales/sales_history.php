@@ -1,10 +1,11 @@
 <?php
 include_once __DIR__ . '/../../config.php';
 
-$sql = "SELECT s.id, c.customer_name, s.total_amount, s.payment_method, s.sales_date 
+// Fetch sales with customer names
+$sql = "SELECT s.id, c.name AS customer_name, s.total_amount, s.sale_date
         FROM sales s
         LEFT JOIN customers c ON s.customer_id = c.id
-        ORDER BY s.sales_date DESC";
+        ORDER BY s.sale_date DESC";
 $result = $conn->query($sql);
 ?>
 
@@ -36,7 +37,6 @@ $result = $conn->query($sql);
                         <th>Sale ID</th>
                         <th>Customer Name</th>
                         <th>Total Amount</th>
-                        <th>Payment Method</th>
                         <th>Date</th>
                         <th>Action</th>
                     </tr>
@@ -46,10 +46,9 @@ $result = $conn->query($sql);
                         <?php while ($row = $result->fetch_assoc()): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($row['id']); ?></td>
-                                <td><?php echo htmlspecialchars($row['customer_name'] ? $row['customer_name'] : 'Guest Customer'); ?></td>
+                                <td><?php echo htmlspecialchars($row['customer_name'] ?: 'Guest Customer'); ?></td>
                                 <td>$<?php echo number_format($row['total_amount'], 2); ?></td>
-                                <td><?php echo htmlspecialchars($row['payment_method']); ?></td>
-                                <td><?php echo date('Y-m-d H:i:s', strtotime($row['sales_date'])); ?></td>
+                                <td><?php echo date('Y-m-d H:i:s', strtotime($row['sale_date'])); ?></td>
                                 <td>
                                     <a href="home.php?page=13&sale_id=<?php echo $row['id']; ?>" class="btn btn-info btn-sm">View Invoice</a>
                                 </td>
@@ -57,7 +56,7 @@ $result = $conn->query($sql);
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="6" class="text-center">No sales transactions found.</td>
+                            <td colspan="5" class="text-center">No sales transactions found.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
