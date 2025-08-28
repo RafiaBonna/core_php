@@ -10,7 +10,7 @@ $sale_id = intval($_GET['sale_id']);
 $sale_data = null;
 $sale_items = [];
 
-// Fetch the main sale details
+// Fetch the main sale details.
 $sql_sale = "SELECT s.id, c.customer_name, s.total_amount, s.payment_method, s.sales_date 
              FROM sales s
              LEFT JOIN customers c ON s.customer_id = c.id
