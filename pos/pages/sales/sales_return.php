@@ -37,13 +37,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_return'])) {
                 throw new Exception("Return quantity exceeds the original sold quantity.");
             }
 
-            // 3. Insert return record
+            // 3. Insert return record.
             $stmt_insert = $conn->prepare("INSERT INTO sales_return (sale_id, product_id, quantity_returned, return_date) VALUES (?, ?, ?, NOW())");
             if (!$stmt_insert) throw new Exception("Prepare failed: " . $conn->error);
             $stmt_insert->bind_param("iii", $sale_id, $product_id, $quantity_returned);
             if (!$stmt_insert->execute()) throw new Exception("Error inserting return: " . $stmt_insert->error);
 
-            // 4. Update stock
+            // 4. Update stock.
             $stmt_update = $conn->prepare("UPDATE stock SET quantity = quantity + ? WHERE id = ?");
             if (!$stmt_update) throw new Exception("Prepare failed: " . $conn->error);
             $stmt_update->bind_param("ii", $quantity_returned, $product_id);
