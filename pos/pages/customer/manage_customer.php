@@ -4,7 +4,7 @@ include_once __DIR__ . '/../../config.php';
 
 $message = "";
 
-// Handle adding a new customer
+// Handle adding a new customer.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_customer'])) {
     $customer_name = mysqli_real_escape_string($conn, $_POST['customer_name']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_customer'])) {
     if (empty($customer_name)) {
         $message = "<div class='alert alert-danger'>Error: Customer name is required.</div>";
     } else {
-        // Check if the customer name already exists
+        // Check if the customer name already exists.
         $sql_check = "SELECT id FROM customers WHERE name = ?";
         $stmt_check = $conn->prepare($sql_check);
         if ($stmt_check) {
