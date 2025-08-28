@@ -35,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_customer'])) {
         if ($stmt->execute()) {
             $message = "Customer updated successfully!";
             // Redirect to prevent form resubmission
-            header("Location: home.php?page=10");
-            exit; // Stop further script execution
+            // header("Location: home.php?page=10");
+            // exit; // Stop further script execution
         } else {
             $message = "Error updating customer: " . $conn->error;
         }

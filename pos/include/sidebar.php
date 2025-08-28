@@ -28,7 +28,7 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-item">
-                    <a href="home.php?page=dashboard" class="nav-link active">
+                    <a href="home.php" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
@@ -57,10 +57,33 @@
                         </li>
                     </ul>
                 </li>
-                
+
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-shopping-basket"></i>
+                        <i class="nav-icon fas fa-tags"></i>
+                        <p>
+                            Category
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="home.php?page=4" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Add Category</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="home.php?page=5" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Manage Category</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-cubes"></i>
                         <p>
                             Products
                             <i class="right fas fa-angle-left"></i>
@@ -70,29 +93,51 @@
                         <li class="nav-item">
                             <a href="home.php?page=7" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Manage Products</p>
+                                <p>Add/Manage Products</p>
                             </a>
                         </li>
                     </ul>
                 </li>
                 
                 <li class="nav-item">
-                    <a href="home.php?page=8" class="nav-link">
-                        <i class="nav-icon fas fa-truck"></i>
-                        <p>Vendors</p>
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-shipping-fast"></i>
+                        <p>
+                            Vendors
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="home.php?page=8" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Manage Vendors</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 
                 <li class="nav-item">
-                    <a href="home.php?page=10" class="nav-link">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>Customers</p>
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-handshake"></i>
+                        <p>
+                            Customers
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="home.php?page=10" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Manage Customers</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-cash-register"></i>
+                        <i class="nav-icon fas fa-shopping-cart"></i>
                         <p>
                             Sales
                             <i class="right fas fa-angle-left"></i>
@@ -114,7 +159,7 @@
                         <li class="nav-item">
                             <a href="home.php?page=14" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Sales Return</p>
+                                <p>Sales return</p>
                             </a>
                         </li>
                     </ul>
@@ -130,25 +175,31 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="home.php?page=15" class="nav-link">
+                            <a href="home.php?page=reports_sales" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Sales Report</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="home.php?page=reports_inventory" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Inventory Report</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="home.php?page=16" class="nav-link">
+                            <a href="home.php?page=reports_profit" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Profit/Loss Report</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="home.php?page=17" class="nav-link">
+                            <a href="home.php?page=reports_customers" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Customers Report</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="home.php?page=18" class="nav-link">
+                            <a href="home.php?page=reports_vendors" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Vendors Report</p>
                             </a>
