@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_return'])) {
             $sale_item = $result->fetch_assoc();
             $sold_quantity = $sale_item['quantity'];
 
-            // 2. Check previous returns
+            // 2. Check previous returns.
             $returned_sql = "SELECT SUM(quantity_returned) AS total_returned FROM sales_return WHERE sale_id = ? AND product_id = ?";
             $stmt_returned = $conn->prepare($returned_sql);
             if (!$stmt_returned) throw new Exception("Prepare failed: " . $conn->error);
