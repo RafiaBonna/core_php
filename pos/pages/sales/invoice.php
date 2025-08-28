@@ -1,7 +1,7 @@
 <?php
 include_once __DIR__ . '/../../config.php';
 
-// Check if a sale ID is provided in the URL
+// Check if a sale ID is provided in the URL.
 if (!isset($_GET['sale_id']) || !is_numeric($_GET['sale_id'])) {
     die("Error: Invalid or missing Sale ID.");
 }
