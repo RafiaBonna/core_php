@@ -59,6 +59,7 @@ if ($result_vendors->num_rows > 0) {
     }
 }
 
+// FIX: Corrected table name from 'product_categories' to 'categories'
 // Fetch all product categories to populate the dropdown
 $sql_categories = "SELECT id, category_name FROM categories ORDER BY category_name ASC";
 $result_categories = $conn->query($sql_categories);
@@ -69,8 +70,9 @@ if ($result_categories->num_rows > 0) {
     }
 }
 
+// FIX: Corrected table name from 'product_categories' to 'categories' in the LEFT JOIN
 // Fetch all products from the database to display in the table
-$sql_products = "SELECT s.id, s.product_name, s.quantity, s.sale_price, s.purchase_price, pc.category_name, v.name AS vendor_name, s.manufacture_date, s.expiry_date FROM stock AS s LEFT JOIN product_categories AS pc ON s.product_category_id = pc.id LEFT JOIN vendors AS v ON s.vendor_id = v.id ORDER BY s.id DESC";
+$sql_products = "SELECT s.id, s.product_name, s.quantity, s.sale_price, s.purchase_price, pc.category_name, v.name AS vendor_name, s.manufacture_date, s.expiry_date FROM stock AS s LEFT JOIN categories AS pc ON s.product_category_id = pc.id LEFT JOIN vendors AS v ON s.vendor_id = v.id ORDER BY s.id DESC";
 $result_products = $conn->query($sql_products);
 $products = [];
 if ($result_products->num_rows > 0) {

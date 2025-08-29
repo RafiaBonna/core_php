@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_return'])) {
         $conn->begin_transaction();
         try {
             // 1. Check if the product exists in the sale.
-            $check_sql = "SELECT quantity FROM sale_items WHERE sale_id = ? AND stock_id = ?";
+            $check_sql = "SELECT quantity FROM sale_items WHERE sales_id = ? AND product_id = ?";
             $stmt_check = $conn->prepare($check_sql);
             if (!$stmt_check) throw new Exception("Prepare failed: " . $conn->error);
             $stmt_check->bind_param("ii", $sale_id, $product_id);
@@ -30,55 +30,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_return'])) {
             if (!$stmt_returned) throw new Exception("Prepare failed: " . $conn->error);
             $stmt_returned->bind_param("ii", $sale_id, $product_id);
             $stmt_returned->execute();
-            $returned_result = $stmt_returned->get_result()->fetch_assoc();
-            $total_returned = $returned_result['total_returned'] ?? 0;
-
-            if (($total_returned + $quantity_returned) > $sold_quantity) {
-                throw new Exception("Return quantity exceeds the original sold quantity.");
+            $returned_result = $stmt_returned->get_result();
+            $returned_row = $returned_result->fetch_assoc();
+            $previously_returned = $returned_row['total_returned'] ?: 0;
+            $remaining_to_return = $sold_quantity - $previously_returned;
+            
+            if ($quantity_returned > $remaining_to_return) {
+                throw new Exception("The quantity to return ($quantity_returned) exceeds the remaining quantity that can be returned ($remaining_to_return).");
             }
-
-            // 3. Insert return record.
-            $stmt_insert = $conn->prepare("INSERT INTO sales_return (sale_id, product_id, quantity_returned, return_date) VALUES (?, ?, ?, NOW())");
+            
+            // 3. Insert into sales_return table.
+            $insert_return_sql = "INSERT INTO sales_return (sale_id, product_id, quantity_returned) VALUES (?, ?, ?)";
+            $stmt_insert = $conn->prepare($insert_return_sql);
             if (!$stmt_insert) throw new Exception("Prepare failed: " . $conn->error);
             $stmt_insert->bind_param("iii", $sale_id, $product_id, $quantity_returned);
-            if (!$stmt_insert->execute()) throw new Exception("Error inserting return: " . $stmt_insert->error);
+            $stmt_insert->execute();
+            $stmt_insert->close();
 
-            // 4. Update stock.
-            $stmt_update = $conn->prepare("UPDATE stock SET quantity = quantity + ? WHERE id = ?");
-            if (!$stmt_update) throw new Exception("Prepare failed: " . $conn->error);
-            $stmt_update->bind_param("ii", $quantity_returned, $product_id);
-            if (!$stmt_update->execute()) throw new Exception("Error updating stock: " . $stmt_update->error);
+            // 4. Update the stock quantity.
+            $update_stock_sql = "UPDATE stock SET quantity = quantity + ? WHERE id = ?";
+            $stmt_update_stock = $conn->prepare($update_stock_sql);
+            if (!$stmt_update_stock) throw new Exception("Prepare failed: " . $conn->error);
+            $stmt_update_stock->bind_param("ii", $quantity_returned, $product_id);
+            $stmt_update_stock->execute();
+            $stmt_update_stock->close();
 
             $conn->commit();
-            $message = "<div class='alert alert-success'>Sale return processed successfully!</div>";
+            $message = "<div class='alert alert-success'>Return processed successfully! Stock has been updated.</div>";
 
         } catch (Exception $e) {
             $conn->rollback();
-            $message = "<div class='alert alert-danger'>Error: " . $e->getMessage() . "</div>";
+            $message = "<div class='alert alert-danger'>Transaction failed: " . $e->getMessage() . "</div>";
         }
     }
 }
 
-// Fetch sales
-$sales = [];
-$sales_result = $conn->query("SELECT id FROM sales ORDER BY id DESC");
-if ($sales_result && $sales_result->num_rows > 0) {
-    while ($row = $sales_result->fetch_assoc()) $sales[] = $row;
-}
-
-// Fetch products
-$products = [];
-$product_result = $conn->query("SELECT id, product_name FROM stock ORDER BY product_name ASC");
-if ($product_result && $product_result->num_rows > 0) {
-    while ($row = $product_result->fetch_assoc()) $products[] = $row;
-}
+// Fetch sales and products for the form dropdowns
+$sales = $conn->query("SELECT id FROM sales ORDER BY id DESC");
+$products = $conn->query("SELECT id, product_name FROM stock ORDER BY product_name ASC");
 ?>
 
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0">Sales Return</h1>
+                <h1 class="m-0">Process Sales Return</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
@@ -91,10 +87,7 @@ if ($product_result && $product_result->num_rows > 0) {
 </div>
 
 <div class="container-fluid">
-    <div class="card card-danger">
-        <div class="card-header">
-            <h3 class="card-title">Process a Sales Return</h3>
-        </div>
+    <div class="card">
         <div class="card-body">
             <?php echo $message; ?>
             <form action="" method="post">

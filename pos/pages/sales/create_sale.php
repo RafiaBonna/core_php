@@ -2,9 +2,9 @@
 // Include database connection
 include_once __DIR__ . '/../../config.php';
 
-// Fetch products
+// Fetch products from stock with available quantity
 $medicinesData = [];
-$medicines = $conn->query("SELECT id AS stock_id, product_name, sale_price, quantity FROM stock WHERE quantity > 0");
+$medicines = $conn->query("SELECT id AS stock_id, product_name, sale_price, quantity FROM stock WHERE quantity > 0 ORDER BY product_name ASC");
 if ($medicines) {
     while ($row = $medicines->fetch_assoc()) {
         $medicinesData[] = $row;
@@ -21,188 +21,250 @@ if ($customers) {
 }
 
 // Handle form submission
+$message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $customer_name = trim($_POST['customer_name'] ?? '');
     $total_amount = floatval($_POST['grand_total'] ?? 0);
     $stock_ids = $_POST['stock_id'] ?? [];
     $quantities = $_POST['quantity'] ?? [];
     $unit_prices = $_POST['unit_price'] ?? [];
+    $product_names = $_POST['product_name'] ?? [];
 
-    if (!empty($stock_ids)) {
-        $conn->begin_transaction();
-        try {
-            // Handle customer
-            $customer_id = null;
-            if ($customer_name !== '') {
-                $stmt = $conn->prepare("SELECT id FROM customers WHERE name = ?");
+    // Begin a database transaction to ensure all operations succeed or fail together
+    $conn->begin_transaction();
+    try {
+        // Handle customer
+        $customer_id = null;
+        if ($customer_name !== '') {
+            $stmt = $conn->prepare("SELECT id FROM customers WHERE name = ?");
+            if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
+            $stmt->bind_param("s", $customer_name);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                $customer = $result->fetch_assoc();
+                $customer_id = $customer['id'];
+            } else {
+                $stmt = $conn->prepare("INSERT INTO customers (name) VALUES (?)");
+                if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
                 $stmt->bind_param("s", $customer_name);
                 $stmt->execute();
-                $res = $stmt->get_result();
-                if ($row = $res->fetch_assoc()) {
-                    $customer_id = $row['id'];
-                } else {
-                    $stmt = $conn->prepare("INSERT INTO customers (name, created_at, updated_at) VALUES (?, NOW(), NOW())");
-                    $stmt->bind_param("s", $customer_name);
-                    $stmt->execute();
-                    $customer_id = $stmt->insert_id;
-                }
+                $customer_id = $conn->insert_id;
             }
-
-            // Insert sale
-            $stmt_sale = $conn->prepare("INSERT INTO sales (customer_id, total_amount, sale_date) VALUES (?, ?, NOW())");
-            $stmt_sale->bind_param("id", $customer_id, $total_amount);
-            $stmt_sale->execute();
-            $sale_id = $conn->insert_id;
-
-            // Insert sale items and update stock
-            for ($i = 0; $i < count($stock_ids); $i++) {
-                $sid = intval($stock_ids[$i]);
-                $qty = intval($quantities[$i]);
-                $price = floatval($unit_prices[$i]);
-                $total_price = $qty * $price;
-
-                $stmt_check = $conn->prepare("SELECT quantity FROM stock WHERE id = ?");
-                $stmt_check->bind_param("i", $sid);
-                $stmt_check->execute();
-                $available_stock = $stmt_check->get_result()->fetch_assoc()['quantity'];
-
-                if ($qty > $available_stock) throw new Exception("Insufficient stock for product ID: $sid");
-
-                $stmt_item = $conn->prepare("INSERT INTO sale_items (sale_id, stock_id, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?)");
-                $stmt_item->bind_param("iiidd", $sale_id, $sid, $qty, $price, $total_price);
-                $stmt_item->execute();
-
-                $stmt_update = $conn->prepare("UPDATE stock SET quantity = quantity - ? WHERE id = ?");
-                $stmt_update->bind_param("ii", $qty, $sid);
-                $stmt_update->execute();
-            }
-
-            $conn->commit();
-            // header("Location: sales_history.php?sale_id=$sale_id");
-            // exit;
-
-        } catch (Exception $e) {
-            $conn->rollback();
-            echo "<div class='alert alert-danger'>Error: " . $e->getMessage() . "</div>";
+            $stmt->close();
         }
-    } else {
-        echo "<div class='alert alert-warning'>Please add at least one product.</div>";
+
+        // Insert sale record
+        $stmt = $conn->prepare("INSERT INTO sales (customer_id, total_amount) VALUES (?, ?)");
+        if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
+        $stmt->bind_param("id", $customer_id, $total_amount);
+        $stmt->execute();
+        $sales_id = $conn->insert_id;
+        $stmt->close();
+
+        // Loop through products and insert sale items, and update stock
+        foreach ($stock_ids as $key => $stock_id) {
+            $quantity = intval($quantities[$key]);
+            if ($quantity <= 0) continue;
+
+            // Insert into sale_items
+            $stmt_item = $conn->prepare("INSERT INTO sale_items (sales_id, product_id, quantity) VALUES (?, ?, ?)");
+            if (!$stmt_item) throw new Exception("Prepare failed: " . $conn->error);
+            $stmt_item->bind_param("iii", $sales_id, $stock_id, $quantity);
+            $stmt_item->execute();
+            $stmt_item->close();
+
+            // Update stock quantity
+            $stmt_stock = $conn->prepare("UPDATE stock SET quantity = quantity - ? WHERE id = ?");
+            if (!$stmt_stock) throw new Exception("Prepare failed: " . $conn->error);
+            $stmt_stock->bind_param("ii", $quantity, $stock_id);
+            $stmt_stock->execute();
+            $stmt_stock->close();
+        }
+
+        $conn->commit();
+        $message = "<div class='alert alert-success'>Sale recorded successfully! Invoice ID: " . $sales_id . "</div>";
+
+    } catch (Exception $e) {
+        $conn->rollback();
+        $message = "<div class='alert alert-danger'>Error: " . $e->getMessage() . "</div>";
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick Sales Entry</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-<div class="container my-4">
-    <h2 class="mb-4">Quick Sales Entry</h2>
-    <form id="salesForm" method="POST">
-        <!-- Customer -->
-        <div class="mb-3">
-            <label for="customer_name" class="form-label">Customer Name</label>
-            <input list="customerList" name="customer_name" id="customer_name" class="form-control" placeholder="Type or select">
-            <datalist id="customerList">
-                <?php foreach ($customersData as $c): ?>
-                    <option value="<?= htmlspecialchars($c['name']); ?>"></option>
-                <?php endforeach; ?>
-            </datalist>
+
+<style>
+    .form-group label {
+        font-weight: 500;
+    }
+    .card-body {
+        padding: 2rem;
+    }
+    .btn-add-item {
+        margin-top: 15px;
+    }
+    .sale-delete-btn {
+        background: none;
+        border: none;
+        color: #dc3545;
+        font-size: 1.25rem;
+        cursor: pointer;
+    }
+    .sale-delete-btn:hover {
+        color: #c82333;
+    }
+    #grand_total {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+</style>
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Create New Sale</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">New Sale</li>
+                </ol>
+            </div>
         </div>
-
-        <!-- Products -->
-        <h5 class="mt-4">Products</h5>
-        <div id="medicine-container" class="mb-3"></div>
-        <button type="button" class="btn btn-sm btn-primary mb-3 add-medicine-btn">+ Add Product</button>
-
-        <!-- Grand Total -->
-        <div class="mb-3">
-            <label for="grand-total" class="form-label">Grand Total</label>
-            <input type="number" id="grand-total" name="grand_total" class="form-control" readonly value="0.00">
-        </div>
-
-        <button type="submit" class="btn btn-success">Confirm Sale</button>
-    </form>
+    </div>
 </div>
 
-<datalist id="medicineList">
-    <?php foreach ($medicinesData as $m): ?>
-        <option value="<?= htmlspecialchars($m['product_name']); ?>"
-                data-id="<?= $m['stock_id']; ?>"
-                data-qty="<?= $m['quantity']; ?>"
-                data-price="<?= $m['sale_price']; ?>"></option>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <?php echo $message; ?>
+            <form method="post" id="saleForm">
+                <div class="mb-3">
+                    <label for="customer_name" class="form-label">Customer Name</label>
+                    <input type="text" list="customers" id="customer_name" name="customer_name" class="form-control" placeholder="Enter customer name or select existing">
+                    <datalist id="customers">
+                        <?php foreach ($customersData as $customer): ?>
+                            <option value="<?= htmlspecialchars($customer['name']); ?>">
+                        <?php endforeach; ?>
+                    </datalist>
+                </div>
+
+                <div id="sale-items-container">
+                    <!-- Dynamic rows will be added here by JavaScript -->
+                </div>
+
+                <button type="button" id="addItemBtn" class="btn btn-primary btn-add-item">Add Item</button>
+
+                <div class="d-flex justify-content-end align-items-center mt-4">
+                    <h4 class="me-3">Grand Total:</h4>
+                    <input type="text" id="grand_total" name="grand_total" class="form-control text-right" readonly value="0.00" style="width: 150px;">
+                </div>
+
+                <button type="submit" class="btn btn-success btn-block mt-4">Process Sale</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<datalist id="products">
+    <?php foreach ($medicinesData as $medicine): ?>
+        <option value="<?= htmlspecialchars($medicine['product_name']); ?>"
+                data-stock-id="<?= htmlspecialchars($medicine['stock_id']); ?>"
+                data-sale-price="<?= htmlspecialchars($medicine['sale_price']); ?>"
+                data-quantity="<?= htmlspecialchars($medicine['quantity']); ?>">
     <?php endforeach; ?>
 </datalist>
 
 <script>
-const medicines = <?php echo json_encode($medicinesData); ?>;
+class SaleForm {
+    constructor() {
+        this.container = document.getElementById('sale-items-container');
+        this.addItemBtn = document.getElementById('addItemBtn');
+        this.totalInput = document.getElementById('grand_total');
+        this.productsDatalist = document.getElementById('products');
+        this.medicines = this.getMedicinesData();
 
-class SalesForm {
-    constructor(formId, containerId, totalId, medicines) {
-        this.form = document.getElementById(formId);
-        this.container = document.getElementById(containerId);
-        this.totalInput = document.getElementById(totalId);
-        this.medicines = medicines;
-        this.init();
+        this.addItemBtn.addEventListener('click', () => this.addItem());
+        this.addItem(); // Add one row by default on page load
     }
 
-    init() {
-        this.addRow();
-        document.querySelector('.add-medicine-btn').addEventListener('click', () => this.addRow());
-
-        this.form.addEventListener('submit', (e) => {
-            if (!confirm('Confirm this sale?')) e.preventDefault();
+    getMedicinesData() {
+        const medicines = [];
+        this.productsDatalist.querySelectorAll('option').forEach(option => {
+            medicines.push({
+                stock_id: option.dataset.stockId,
+                product_name: option.value,
+                sale_price: option.dataset.salePrice,
+                quantity: parseInt(option.dataset.quantity)
+            });
         });
+        return medicines;
     }
 
-    addRow() {
+    addItem() {
         const row = document.createElement('div');
-        row.className = 'row g-3 align-items-end mb-2';
+        row.classList.add('row', 'mb-3', 'align-items-end');
         row.innerHTML = `
-            <div class="col-md-4">
-                <label class="form-label">Product</label>
-                <input list="medicineList" name="product_name[]" class="form-control" required>
-                <input type="hidden" name="stock_id[]">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="product_name">Product Name</label>
+                    <input type="text" name="product_name[]" class="form-control product-input" list="products" required>
+                    <input type="hidden" name="stock_id[]" class="stock-id-input">
+                </div>
             </div>
             <div class="col-md-2">
-                <label class="form-label">Quantity</label>
-                <input type="number" name="quantity[]" class="form-control" min="1" value="1">
+                <div class="form-group">
+                    <label for="unit_price">Unit Price</label>
+                    <input type="number" name="unit_price[]" class="form-control unit-price-input" step="0.01" readonly>
+                </div>
             </div>
             <div class="col-md-2">
-                <label class="form-label">Unit Price</label>
-                <input type="number" name="unit_price[]" class="form-control" step="0.01" value="0.00" readonly>
+                <div class="form-group">
+                    <label for="quantity">Qty</label>
+                    <input type="number" name="quantity[]" class="form-control quantity-input" min="1" value="1" required>
+                    <small class="text-muted stock-info"></small>
+                </div>
             </div>
             <div class="col-md-2">
-                <label class="form-label">Total</label>
-                <input type="number" name="total[]" class="form-control" step="0.01" value="0.00" readonly>
+                <div class="form-group">
+                    <label for="total">Total</label>
+                    <input type="number" name="total[]" class="form-control total-input" step="0.01" readonly>
+                </div>
             </div>
-            <div class="col-md-2">
-                <button type="button" class="btn btn-danger btn-sm sale-delete-btn">❌</button>
+            <div class="col-md-1 d-flex justify-content-center">
+                <button type="button" class="sale-delete-btn" aria-label="Delete item">&times;</button>
             </div>
         `;
 
-        const productInput = row.querySelector('[name="product_name[]"]');
-        const qtyInput = row.querySelector('[name="quantity[]"]');
-        const unitPriceInput = row.querySelector('[name="unit_price[]"]');
-        const totalInput = row.querySelector('[name="total[]"]');
-        const stockIdInput = row.querySelector('[name="stock_id[]"]');
+        const productInput = row.querySelector('.product-input');
+        const qtyInput = row.querySelector('.quantity-input');
+        const unitPriceInput = row.querySelector('.unit-price-input');
+        const totalInput = row.querySelector('.total-input');
+        const stockIdInput = row.querySelector('.stock-id-input');
+        const stockInfo = row.querySelector('.stock-info');
 
         const updateRow = () => {
             const productName = productInput.value.trim().toLowerCase();
             const product = this.medicines.find(m => m.product_name.toLowerCase() === productName);
+            
+            unitPriceInput.value = "";
+            totalInput.value = "";
+            stockIdInput.value = "";
+            stockInfo.textContent = "";
+
             if (!product) {
-                unitPriceInput.value = "0.00";
-                totalInput.value = "0.00";
-                stockIdInput.value = "";
                 this.updateTotal();
                 return;
             }
-            let qty = parseFloat(qtyInput.value) || 1;
-            if (qty > product.quantity) qty = product.quantity;
-            qtyInput.value = qty;
+
+            let qty = parseInt(qtyInput.value) || 1;
+            if (qty > product.quantity) {
+                qty = product.quantity;
+                qtyInput.value = qty;
+            }
+            if (product.quantity > 0) {
+                stockInfo.textContent = `In stock: ${product.quantity}`;
+            }
 
             unitPriceInput.value = parseFloat(product.sale_price).toFixed(2);
             totalInput.value = (qty * product.sale_price).toFixed(2);
@@ -210,7 +272,7 @@ class SalesForm {
             this.updateTotal();
         };
 
-        productInput.addEventListener('change', updateRow);
+        productInput.addEventListener('input', updateRow);
         qtyInput.addEventListener('input', updateRow);
         row.querySelector('.sale-delete-btn').addEventListener('click', () => {
             row.remove();
@@ -228,8 +290,6 @@ class SalesForm {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    new SalesForm('salesForm', 'medicine-container', 'grand-total', medicines);
+    new SaleForm();
 });
 </script>
-</body>
-</
