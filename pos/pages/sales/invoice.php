@@ -111,6 +111,24 @@ $result_items = $stmt_items->get_result();
             margin-top: 20px;
             color: #777;
         }
+        .print-button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            text-align: center;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        @media print {
+            .print-button {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -138,15 +156,15 @@ $result_items = $stmt_items->get_result();
                 <table>
                     <tr>
                         <td>
-                            <p style="font-weight: bold;">Our Company</p>
+                            <p style="font-weight: bold;">M&R Company</p>
                             123 Main Street<br>
-                            Anytown, USA 12345<br>
-                            info@company.com
+                             Dhanmondi,Dhaka-Bangladesh 1204<br>
+                            M&R@company.com
                         </td>
                         <td style="text-align: right;">
                             <p style="font-weight: bold;">Billed to</p>
-                            <?php echo htmlspecialchars($sale['customer_name']); ?><br>
-                            <?php echo htmlspecialchars($sale['phone']); ?>
+                            <?php echo htmlspecialchars($sale['customer_name'] ?: 'Guest'); ?><br>
+                            <?php echo htmlspecialchars($sale['phone'] ?: 'N/A'); ?>
                         </td>
                     </tr>
                 </table>
@@ -181,16 +199,18 @@ $result_items = $stmt_items->get_result();
         <tr class="total">
             <td colspan="3"></td>
             <td style="text-align: right;">
-               Total: **<?php echo htmlspecialchars(number_format($grand_total, 2)); ?>**
+                Total: **<?php echo htmlspecialchars(number_format($grand_total, 2)); ?>**
             </td>
         </tr>
     </table>
     
     <div class="invoice-footer">
         <p>Thank you for your business!</p>
-        <p>For any inquiries, please contact us at info@company.com</p>
+        <p>For any inquiries, please contact us at M&R @company.com</p>
     </div>
 </div>
+
+<button onclick="window.print()" class="print-button">Print Invoice</button>
 
 </body>
 </html>

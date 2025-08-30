@@ -16,7 +16,7 @@ if ($result_vendors->num_rows > 0) {
 }
 
 // Fetch all product categories to populate the dropdown
-$sql_categories = "SELECT id, category_name FROM product_categories ORDER BY category_name ASC";
+$sql_categories = "SELECT id, category_name FROM categories ORDER BY category_name ASC";
 $result_categories = $conn->query($sql_categories);
 if ($result_categories->num_rows > 0) {
     while ($row = $result_categories->fetch_assoc()) {

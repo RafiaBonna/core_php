@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_return'])) {
         $conn->begin_transaction();
         try {
             // 1. Check if the product exists in the sale.
-            $check_sql = "SELECT quantity FROM sale_items WHERE sales_id = ? AND product_id = ?";
+            $check_sql = "SELECT quantity FROM sale_items WHERE sale_id = ? AND stock_id = ?";
             $stmt_check = $conn->prepare($check_sql);
             if (!$stmt_check) throw new Exception("Prepare failed: " . $conn->error);
             $stmt_check->bind_param("ii", $sale_id, $product_id);

@@ -87,7 +87,7 @@ switch ($page) {
         break;
     case "19":
         // Expired Products Page
-        include __DIR__ . '/pages/expired_products/expired_products.php';
+        include __DIR__ .  '/pages/customer/edit_customer.php';
         break;
     case "20":
         // Expired Product Details Page
