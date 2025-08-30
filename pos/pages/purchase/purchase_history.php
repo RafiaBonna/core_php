@@ -1,11 +1,12 @@
 <?php
+// Include the database connection file.
 include_once __DIR__ . '/../../config.php';
 
-// Fetch sales with customer names
-$sql = "SELECT s.id, c.name AS customer_name, s.total_amount, s.sale_date
-        FROM sales s
-        LEFT JOIN customers c ON s.customer_id = c.id
-        ORDER BY s.sale_date DESC";
+// Prepare and execute the query for purchase history.
+$sql = "SELECT p.id, v.name AS vendor_name, p.total_amount, p.purchase_date
+        FROM purchases p
+        LEFT JOIN vendors v ON p.vendor_id = v.id
+        ORDER BY p.purchase_date DESC";
 $result = $conn->query($sql);
 ?>
 
@@ -13,12 +14,12 @@ $result = $conn->query($sql);
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0">Sales History</h1>
+                <h1 class="m-0">Purchase History</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active">Sales History</li>
+                    <li class="breadcrumb-item active">Purchase History</li>
                 </ol>
             </div>
         </div>
@@ -28,14 +29,14 @@ $result = $conn->query($sql);
 <div class="container-fluid">
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">All Sales Transactions</h3>
+            <h3 class="card-title">All Purchase Transactions</h3>
         </div>
         <div class="card-body">
-            <table id="salesTable" class="table table-bordered table-striped">
+            <table id="purchaseTable" class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>Sale ID</th>
-                        <th>Customer Name</th>
+                        <th>Purchase ID</th>
+                        <th>Vendor Name</th>
                         <th>Total Amount</th>
                         <th>Date</th>
                         <th>Action</th>
@@ -46,17 +47,18 @@ $result = $conn->query($sql);
                         <?php while ($row = $result->fetch_assoc()): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($row['id']); ?></td>
-                                <td><?php echo htmlspecialchars($row['customer_name'] ?: 'Guest Customer'); ?></td>
-                                <td>$<?php echo number_format($row['total_amount'], 2); ?></td>
-                                <td><?php echo date('Y-m-d H:i:s', strtotime($row['sale_date'])); ?></td>
+                                <td><?php echo htmlspecialchars($row['vendor_name'] ?: 'N/A'); ?></td>
+                                <td><?php echo number_format($row['total_amount'], 2); ?></td>
+                                <td><?php echo date('Y-m-d H:i:s', strtotime($row['purchase_date'])); ?></td>
                                 <td>
-                                    <a href="home.php?page=13&sale_id=<?php echo $row['id']; ?>" class="btn btn-info btn-sm">View Invoice</a>
+                                    <!-- এখানে লিঙ্কটি 27 নম্বর ব্যবহার করে আপডেট করা হয়েছে -->
+                                    <a href="home.php?page=27&purchase_id=<?php echo htmlspecialchars($row['id']); ?>" class="btn btn-info btn-sm">View Invoice</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="5" class="text-center">No sales transactions found.</td>
+                            <td colspan="5" class="text-center">No purchase transactions found.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

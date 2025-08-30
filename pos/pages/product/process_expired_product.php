@@ -29,13 +29,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['move_to_expired'])) {
 
         $conn->commit();
 
-        header("Location: ../../home.php?page=expired_products&status=success");
+        header("Location: ../../home.php?page=expired_products&status=success&message=Product moved to expired stock successfully!");
         exit;
+
     } catch (Exception $e) {
         $conn->rollback();
-        header("Location: ../../home.php?page=expired_products&status=error&message=" . urlencode($e->getMessage()));
+        header("Location: ../../home.php?page=expired_products&status=error&message=" . urlencode("Error: " . $e->getMessage()));
         exit;
     }
 } else {
-    die("Invalid request.");
+    header("Location: ../../home.php?page=expired_products");
+    exit;
 }

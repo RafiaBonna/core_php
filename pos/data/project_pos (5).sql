@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 30, 2025 at 07:24 AM
+-- Generation Time: Aug 30, 2025 at 09:26 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -83,9 +83,8 @@ INSERT INTO `customers` (`id`, `name`, `phone`, `email`, `address`, `created_at`
 
 CREATE TABLE `expired_products` (
   `id` int(11) NOT NULL,
-  `product_name` varchar(255) NOT NULL,
-  `category` varchar(255) DEFAULT NULL,
-  `current_stock` int(11) DEFAULT NULL,
+  `stock_id` int(11) NOT NULL,
+  `quantity_expired` int(11) NOT NULL,
   `expiry_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -98,23 +97,20 @@ CREATE TABLE `expired_products` (
 CREATE TABLE `products` (
   `id` int(11) NOT NULL,
   `product_name` varchar(255) NOT NULL,
-  `price` decimal(10,2) NOT NULL,
-  `stock` int(11) NOT NULL,
-  `category_id` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `expiry_date` date DEFAULT NULL
+  `category_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`id`, `product_name`, `price`, `stock`, `category_id`, `created_at`, `updated_at`, `expiry_date`) VALUES
-(1, 'Mobile', 350000.00, 12, 1, '2025-08-18 00:42:41', '2025-08-24 06:00:34', '2025-08-21'),
-(2, 'Tablet', 110000.00, 11, 1, '2025-08-18 00:43:18', '2025-08-24 03:50:30', '2025-08-22'),
-(3, 'Sunscreen', 200000.00, 200, 3, '2025-08-18 13:12:53', '2025-08-24 04:03:16', '2025-08-23'),
-(4, 'Notebook', 60000.00, 300, 9, '2025-08-19 21:26:22', '2025-08-19 21:26:22', '2026-08-10');
+INSERT INTO `products` (`id`, `product_name`, `category_id`) VALUES
+(1, 'Mobile', 1),
+(3, 'Sunscreen', 3),
+(4, 'Notebook', 9),
+(9, 'Sunscreen', 3),
+(10, 'Tablet', 1),
+(11, 'lipsticks', 3);
 
 -- --------------------------------------------------------
 
@@ -128,6 +124,18 @@ CREATE TABLE `purchases` (
   `total_amount` decimal(10,2) NOT NULL,
   `purchase_date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `purchases`
+--
+
+INSERT INTO `purchases` (`id`, `vendor_id`, `total_amount`, `purchase_date`) VALUES
+(1, 2, 3000.00, '2025-08-30 20:25:08'),
+(13, 4, 300000.00, '2025-08-30 20:32:11'),
+(17, 4, 300000.00, '2025-08-30 20:40:07'),
+(18, 4, 300000.00, '2025-08-30 20:40:36'),
+(19, 6, 10000.00, '2025-08-30 21:02:08'),
+(20, 4, 10000.00, '2025-08-30 21:03:22');
 
 -- --------------------------------------------------------
 
@@ -144,6 +152,17 @@ CREATE TABLE `purchase_items` (
   `total_price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `purchase_items`
+--
+
+INSERT INTO `purchase_items` (`id`, `purchase_id`, `stock_id`, `quantity`, `unit_price`, `total_price`) VALUES
+(2, 13, 7, 20, 15000.00, 0.00),
+(3, 17, 7, 20, 15000.00, 0.00),
+(4, 18, 7, 20, 15000.00, 0.00),
+(5, 19, 8, 10, 1000.00, 0.00),
+(6, 20, 8, 10, 1000.00, 0.00);
+
 -- --------------------------------------------------------
 
 --
@@ -155,7 +174,9 @@ CREATE TABLE `purchase_returns` (
   `stock_id` int(11) NOT NULL,
   `returned_quantity` int(11) NOT NULL,
   `return_date` datetime NOT NULL,
-  `created_at` datetime NOT NULL
+  `created_at` datetime NOT NULL,
+  `purchase_id` int(11) NOT NULL,
+  `reason` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -231,19 +252,10 @@ INSERT INTO `sales` (`id`, `customer_id`, `total_amount`, `sale_date`) VALUES
 CREATE TABLE `sales_return` (
   `id` int(11) NOT NULL,
   `sale_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
+  `stock_id` int(11) NOT NULL,
   `quantity_returned` int(11) NOT NULL,
   `return_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `sales_return`
---
-
-INSERT INTO `sales_return` (`id`, `sale_id`, `product_id`, `quantity_returned`, `return_date`) VALUES
-(1, 8, 5, 5, '2025-08-28 12:43:23'),
-(2, 8, 5, 5, '2025-08-28 12:43:55'),
-(3, 13, 4, 2, '2025-08-30 10:19:16');
 
 -- --------------------------------------------------------
 
@@ -287,8 +299,7 @@ INSERT INTO `sale_items` (`id`, `sale_id`, `stock_id`, `quantity`, `unit_price`,
 
 CREATE TABLE `stock` (
   `id` int(11) NOT NULL,
-  `product_name` varchar(255) NOT NULL,
-  `product_category_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
   `purchase_price` decimal(10,2) NOT NULL,
   `sale_price` decimal(10,2) NOT NULL,
@@ -303,12 +314,9 @@ CREATE TABLE `stock` (
 -- Dumping data for table `stock`
 --
 
-INSERT INTO `stock` (`id`, `product_name`, `product_category_id`, `quantity`, `purchase_price`, `sale_price`, `manufacture_date`, `expiry_date`, `vendor_id`, `created_at`, `updated_at`) VALUES
-(1, 'Keyboard', 1, 99, 700.00, 1000.00, NULL, '2030-08-20', 1, '2025-08-25 00:55:11', '2025-08-30 09:47:32'),
-(2, 'Monitor', 1, 88, 80000.00, 100000.00, '2025-08-08', '2030-08-20', 1, '2025-08-25 01:09:36', '2025-08-25 09:10:39'),
-(4, 'Facewash', 3, 387, 300.00, 450.00, '2025-08-25', '2027-06-08', 2, '2025-08-27 09:17:19', '2025-08-30 09:48:21'),
-(5, 'Foundation', 3, 370, 2000.00, 3000.00, '2025-08-20', '2027-01-12', 2, '2025-08-27 12:21:30', '2025-08-28 12:25:38'),
-(6, 'T-Shirt', 13, 0, 800.00, 1000.00, '2025-08-28', '2026-10-28', 1, '2025-08-30 09:38:25', '2025-08-30 09:46:59');
+INSERT INTO `stock` (`id`, `product_id`, `quantity`, `purchase_price`, `sale_price`, `manufacture_date`, `expiry_date`, `vendor_id`, `created_at`, `updated_at`) VALUES
+(7, 10, 60, 15000.00, 20000.00, '2028-08-24', '2028-08-24', 4, '2025-08-30 20:32:11', '2025-08-30 20:40:36'),
+(8, 3, 20, 1000.00, 1600.00, NULL, '2025-08-29', 6, '2025-08-30 21:02:10', '2025-08-30 21:03:22');
 
 -- --------------------------------------------------------
 
@@ -365,7 +373,8 @@ INSERT INTO `vendors` (`id`, `name`, `contact_person`, `phone`, `email`, `addres
 (1, 'Michale', NULL, NULL, NULL, NULL, '0000-00-00 00:00:00', NULL),
 (2, 'Rosella', NULL, NULL, NULL, NULL, '0000-00-00 00:00:00', NULL),
 (4, 'Elvish', NULL, NULL, NULL, NULL, '2025-08-25 09:22:38', NULL),
-(5, 'Gretel', NULL, NULL, NULL, NULL, '2025-08-28 12:25:52', NULL);
+(5, 'Gretel', NULL, NULL, NULL, NULL, '2025-08-28 12:25:52', NULL),
+(6, 'Autumn', NULL, NULL, NULL, NULL, '2025-08-31 00:48:28', NULL);
 
 --
 -- Indexes for dumped tables
@@ -387,7 +396,8 @@ ALTER TABLE `customers`
 -- Indexes for table `expired_products`
 --
 ALTER TABLE `expired_products`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `stock_id` (`stock_id`);
 
 --
 -- Indexes for table `products`
@@ -415,7 +425,8 @@ ALTER TABLE `purchase_items`
 --
 ALTER TABLE `purchase_returns`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `stock_id` (`stock_id`);
+  ADD KEY `stock_id` (`stock_id`),
+  ADD KEY `fk_purchase_returns_purchase_id` (`purchase_id`);
 
 --
 -- Indexes for table `return_items`
@@ -443,8 +454,8 @@ ALTER TABLE `sales`
 --
 ALTER TABLE `sales_return`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_sale_product` (`sale_id`,`product_id`),
-  ADD KEY `fk_sales_return_product` (`product_id`);
+  ADD KEY `idx_sale_product` (`sale_id`,`stock_id`),
+  ADD KEY `fk_sales_return_product` (`stock_id`);
 
 --
 -- Indexes for table `sale_items`
@@ -459,7 +470,8 @@ ALTER TABLE `sale_items`
 --
 ALTER TABLE `stock`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `product_category_id` (`product_category_id`),
+  ADD UNIQUE KEY `idx_unique_product_id` (`product_id`),
+  ADD KEY `product_category_id` (`product_id`),
   ADD KEY `vendor_id` (`vendor_id`);
 
 --
@@ -503,19 +515,19 @@ ALTER TABLE `expired_products`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `purchases`
 --
 ALTER TABLE `purchases`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `purchase_items`
 --
 ALTER TABLE `purchase_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `purchase_returns`
@@ -557,7 +569,7 @@ ALTER TABLE `sale_items`
 -- AUTO_INCREMENT for table `stock`
 --
 ALTER TABLE `stock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -569,18 +581,42 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `vendors`
 --
 ALTER TABLE `vendors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
 --
 
 --
+-- Constraints for table `expired_products`
+--
+ALTER TABLE `expired_products`
+  ADD CONSTRAINT `expired_products_ibfk_1` FOREIGN KEY (`stock_id`) REFERENCES `stock` (`id`);
+
+--
+-- Constraints for table `purchase_items`
+--
+ALTER TABLE `purchase_items`
+  ADD CONSTRAINT `fk_purchase_items_stock_id` FOREIGN KEY (`stock_id`) REFERENCES `stock` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `purchase_returns`
+--
+ALTER TABLE `purchase_returns`
+  ADD CONSTRAINT `fk_purchase_returns_purchase_id` FOREIGN KEY (`purchase_id`) REFERENCES `purchases` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `sales_return`
 --
 ALTER TABLE `sales_return`
-  ADD CONSTRAINT `fk_sales_return_product` FOREIGN KEY (`product_id`) REFERENCES `stock` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_sales_return_sale` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_sales_return_sale` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_sales_return_stock` FOREIGN KEY (`stock_id`) REFERENCES `stock` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `stock`
+--
+ALTER TABLE `stock`
+  ADD CONSTRAINT `fk_stock_product_id` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

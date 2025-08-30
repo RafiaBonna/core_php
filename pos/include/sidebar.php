@@ -137,6 +137,38 @@
 
                 <li class="nav-item">
                     <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-truck-loading"></i>
+                        <p>
+                            Purchases
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="home.php?page=23" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Create Purchase</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="home.php?page=25" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Purchase History</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                    <a href="home.php?page=28" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                        <p>
+                                Purchase Return
+                         </p>
+    </a>
+</li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-shopping-cart"></i>
                         <p>
                             Sales
@@ -165,6 +197,30 @@
                     </ul>
                 </li>
                 
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-warehouse"></i>
+                        <p>
+                            Inventory
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="home.php?page=22" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Stock</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="home.php?page=23" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Expired Products</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-chart-line"></i>

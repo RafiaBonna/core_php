@@ -86,7 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt_stock->bind_param("ii", $quantity, $stock_id);
             $stmt_stock->execute();
         }
-
         $stmt_item->close();
         $stmt_stock->close();
 
@@ -119,174 +118,194 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="container-fluid">
     <?php echo $message; ?>
-    <div class="card">
+    <div class="card card-primary">
         <div class="card-header">
-            <h3 class="card-title">Add New Sale</h3>
+            <h3 class="card-title">New Sales Transaction</h3>
         </div>
-        <div class="card-body">
-            <form action="home.php?page=11" method="POST" id="saleForm">
+        <form action="" method="post">
+            <div class="card-body">
                 <div class="form-group mb-3">
                     <label for="customer_name">Customer Name</label>
-                    <input type="text" name="customer_name" id="customer_name" class="form-control" list="customer-list" placeholder="Start typing or select a customer">
-                    <datalist id="customer-list">
+                    <input type="text" list="customersList" name="customer_name" id="customer_name" class="form-control" placeholder="Enter customer name or select from list">
+                    <datalist id="customersList">
                         <?php foreach ($customersData as $customer): ?>
                             <option value="<?= htmlspecialchars($customer['name']); ?>">
                         <?php endforeach; ?>
                     </datalist>
                 </div>
-
                 <hr>
-                
                 <div id="sale-items-container">
-                    <div class="row sale-item-row mb-3">
-                        <div class="col-md-4">
-                            <label>Product Name</label>
-                            <input type="text" class="form-control product-name-input" name="product_name[]" list="product-list" required>
+                    <div class="row sale-item-row mb-3 align-items-end">
+                        <div class="col-md-5">
+                            <label>Product</label>
+                            <input type="text" list="productsList" class="form-control product-name-input" placeholder="Search Product" required>
+                            <datalist id="productsList">
+                                <?php foreach ($medicinesData as $medicine): ?>
+                                    <option value="<?= htmlspecialchars($medicine['product_name']); ?>" data-stock-id="<?= htmlspecialchars($medicine['stock_id']); ?>" data-quantity="<?= htmlspecialchars($medicine['quantity']); ?>" data-sale-price="<?= htmlspecialchars($medicine['sale_price']); ?>">
+                                <?php endforeach; ?>
+                            </datalist>
+                            <input type="hidden" name="stock_id[]" class="stock-id-input">
+                            <input type="hidden" name="product_name[]" class="product-name-input-hidden">
+                            <small class="text-muted stock-info"></small>
                         </div>
                         <div class="col-md-2">
                             <label>Unit Price</label>
-                            <input type="number" step="0.01" class="form-control unit-price-input" name="unit_price[]" required readonly>
+                            <input type="number" step="0.01" name="unit_price[]" class="form-control unit-price-input" required readonly>
                         </div>
                         <div class="col-md-2">
                             <label>Quantity</label>
-                            <input type="number" class="form-control quantity-input" name="quantity[]" min="1" value="1" required>
-                            <small class="text-info stock-info"></small>
+                            <input type="number" name="quantity[]" class="form-control quantity-input" value="1" min="1" required>
                         </div>
                         <div class="col-md-2">
                             <label>Total</label>
-                            <input type="number" step="0.01" class="form-control total-input" name="total[]" required readonly>
+                            <input type="number" step="0.01" name="total[]" class="form-control total-input" required readonly>
                         </div>
-                        <div class="col-md-2">
-                            <label style="color: transparent;">Action</label>
-                            <button type="button" class="btn btn-danger btn-block sale-delete-btn"><i class="fas fa-trash"></i></button>
+                        <div class="col-md-1 d-flex justify-content-end">
+                            <button type="button" class="btn btn-danger remove-row" style="display: none;">-</button>
                         </div>
-                        <input type="hidden" name="stock_id[]" class="stock-id-input">
                     </div>
                 </div>
-
-                <datalist id="product-list">
-                    <?php foreach ($medicinesData as $medicine): ?>
-                        <option value="<?= htmlspecialchars($medicine['product_name']); ?>" data-stock-id="<?= htmlspecialchars($medicine['stock_id']); ?>" data-sale-price="<?= htmlspecialchars($medicine['sale_price']); ?>" data-quantity="<?= htmlspecialchars($medicine['quantity']); ?>">
-                    <?php endforeach; ?>
-                </datalist>
-                
-                <div class="row mt-3">
-                    <div class="col-md-12 text-right">
-                        <button type="button" id="add-item-btn" class="btn btn-primary"><i class="fas fa-plus"></i> Add Item</button>
+                <div class="row mb-3">
+                    <div class="col-12 text-right">
+                        <button type="button" class="btn btn-secondary" id="add-item">Add Item</button>
                     </div>
                 </div>
-
-                <div class="row mt-4">
+                <hr>
+                <div class="row">
                     <div class="col-md-6 offset-md-6">
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-between">
                             <h4>Grand Total:</h4>
-                            <input type="text" name="grand_total" id="grand-total" class="form-control form-control-lg text-right" style="width: 50%; font-weight: bold;" value="0.00" readonly>
+                            <h4><span id="grand-total-display">0.00</span></h4>
+                            <input type="hidden" name="grand_total" id="grand-total-input">
                         </div>
                     </div>
                 </div>
-                
-                <div class="mt-4">
-                    <button type="submit" name="create_sale" class="btn btn-success btn-block btn-lg">Complete Sale</button>
-                </div>
-            </form>
-        </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" name="create_sale" class="btn btn-success float-right">Complete Sale</button>
+            </div>
+        </form>
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 class SaleManager {
     constructor() {
-        this.container = document.getElementById('sale-items-container');
-        this.totalInput = document.getElementById('grand-total');
-        this.medicinesData = <?= json_encode($medicinesData); ?>;
-        this.addEventListeners();
+        this.container = $('#sale-items-container');
+        this.addItemButton = $('#add-item');
+        this.grandTotalDisplay = $('#grand-total-display');
+        this.grandTotalInput = $('#grand-total-input');
+        this.bindEvents();
+    }
+
+    bindEvents() {
+        this.container.on('input', '.product-name-input', this.handleProductInput.bind(this));
+        this.container.on('input', '.quantity-input', this.handleQuantityChange.bind(this));
+        this.container.on('click', '.remove-row', this.removeRow.bind(this));
+        this.addItemButton.on('click', this.addNewRow.bind(this));
+    }
+
+    handleProductInput(e) {
+        const input = $(e.target);
+        const row = input.closest('.sale-item-row');
+        const value = input.val();
+        const option = $('#productsList option[value="' + value + '"]');
+
+        if (option.length) {
+            const product = {
+                stock_id: option.data('stock-id'),
+                quantity: option.data('quantity'),
+                sale_price: option.data('sale-price')
+            };
+            this.updateRow(row, product);
+        } else {
+            this.clearRow(row);
+        }
+    }
+
+    handleQuantityChange(e) {
+        const input = $(e.target);
+        const row = input.closest('.sale-item-row');
+        const quantity = parseInt(input.val()) || 0;
+        const availableStock = parseInt(row.find('.product-name-input').get(0).list.options[0].dataset.quantity) || 0;
+
+        if (quantity > availableStock) {
+            input.val(availableStock);
+            alert('Cannot sell more than available stock.');
+        }
+        
+        this.updateRowTotals(row);
+    }
+
+    updateRow(row, product) {
+        const qtyInput = row.find('.quantity-input');
+        const unitPriceInput = row.find('.unit-price-input');
+        const stockIdInput = row.find('.stock-id-input');
+        const totalInput = row.find('.total-input');
+        const stockInfo = row.find('.stock-info');
+
+        let qty = parseInt(qtyInput.val()) || 1;
+        if (qty > product.quantity) {
+            qty = product.quantity;
+            qtyInput.val(qty);
+        }
+        if (product.quantity > 0) {
+            stockInfo.text(`In stock: ${product.quantity}`);
+        }
+
+        unitPriceInput.val(parseFloat(product.sale_price).toFixed(2));
+        totalInput.val((qty * product.sale_price).toFixed(2));
+        stockIdInput.val(product.stock_id);
         this.updateTotal();
     }
 
-    addEventListeners() {
-        document.getElementById('add-item-btn').addEventListener('click', () => this.addNewRow());
-        this.container.addEventListener('input', (e) => this.handleRowUpdate(e));
-        this.container.addEventListener('click', (e) => this.handleDelete(e));
+    clearRow(row) {
+        row.find('.unit-price-input').val('');
+        row.find('.quantity-input').val('1');
+        row.find('.total-input').val('');
+        row.find('.stock-id-input').val('');
+        row.find('.stock-info').text('');
+        this.updateTotal();
     }
 
-    handleRowUpdate(e) {
-        if (e.target.matches('.product-name-input, .quantity-input')) {
-            const row = e.target.closest('.sale-item-row');
-            this.updateRow(row);
-        }
+    updateRowTotals(row) {
+        const quantity = parseFloat(row.find('.quantity-input').val()) || 0;
+        const unitPrice = parseFloat(row.find('.unit-price-input').val()) || 0;
+        const total = quantity * unitPrice;
+        row.find('.total-input').val(total.toFixed(2));
+        this.updateTotal();
     }
 
-    handleDelete(e) {
-        if (e.target.closest('.sale-delete-btn')) {
-            const row = e.target.closest('.sale-item-row');
-            if (this.container.querySelectorAll('.sale-item-row').length > 1) {
-                row.remove();
-                this.updateTotal();
-            } else {
-                alert('You must have at least one product in the sale.');
-            }
-        }
-    }
-
-    updateRow(row) {
-        const productInput = row.querySelector('.product-name-input');
-        const qtyInput = row.querySelector('.quantity-input');
-        const unitPriceInput = row.querySelector('.unit-price-input');
-        const totalInput = row.querySelector('.total-input');
-        const stockIdInput = row.querySelector('.stock-id-input');
-        const stockInfo = row.querySelector('.stock-info');
-
-        const productName = productInput.value;
-        const product = this.medicinesData.find(m => m.product_name === productName);
-        
-        unitPriceInput.value = "";
-        totalInput.value = "";
-        stockIdInput.value = "";
-        stockInfo.textContent = "";
-
-        if (!product) {
-            this.updateTotal();
-            return;
-        }
-
-        let qty = parseInt(qtyInput.value) || 1;
-        if (qty > product.quantity) {
-            qty = product.quantity;
-            qtyInput.value = qty;
-        }
-        if (product.quantity > 0) {
-            stockInfo.textContent = `In stock: ${product.quantity}`;
-        }
-
-        unitPriceInput.value = parseFloat(product.sale_price).toFixed(2);
-        totalInput.value = (qty * product.sale_price).toFixed(2);
-        stockIdInput.value = product.stock_id;
+    removeRow(e) {
+        $(e.target).closest('.sale-item-row').remove();
         this.updateTotal();
     }
 
     addNewRow() {
-        const firstRow = this.container.querySelector('.sale-item-row');
-        if (firstRow) {
-            const newRow = firstRow.cloneNode(true);
-            newRow.querySelector('.product-name-input').value = "";
-            newRow.querySelector('.unit-price-input').value = "";
-            newRow.querySelector('.quantity-input').value = "1";
-            newRow.querySelector('.total-input').value = "";
-            newRow.querySelector('.stock-id-input').value = "";
-            newRow.querySelector('.stock-info').textContent = "";
-            this.container.appendChild(newRow);
+        const firstRow = this.container.find('.sale-item-row').first();
+        if (firstRow.length) {
+            const newRow = firstRow.clone(true); // true to copy events
+            newRow.find('input').val('');
+            newRow.find('.quantity-input').val('1');
+            newRow.find('.stock-info').text('');
+            newRow.find('.remove-row').show();
+            this.container.append(newRow);
             this.updateTotal();
         }
     }
 
     updateTotal() {
         let total = 0;
-        this.container.querySelectorAll('[name="total[]"]').forEach(inp => total += parseFloat(inp.value) || 0);
-        this.totalInput.value = total.toFixed(2);
+        this.container.find('[name="total[]"]').each(function() {
+            total += parseFloat($(this).val()) || 0;
+        });
+        this.grandTotalDisplay.text(total.toFixed(2));
+        this.grandTotalInput.val(total.toFixed(2));
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+$(function() {
     new SaleManager();
 });
 </script>
