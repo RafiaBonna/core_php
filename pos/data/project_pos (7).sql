@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 28, 2025 at 08:45 AM
+-- Generation Time: Aug 30, 2025 at 07:24 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -41,7 +41,12 @@ INSERT INTO `categories` (`id`, `category_name`, `parent_id`) VALUES
 (1, 'Electronics', NULL),
 (3, 'Cosmetics', NULL),
 (13, 'Clothing &  Apparel', NULL),
-(14, 'Stationery & office supplies', NULL);
+(14, 'Stationery & office supplies', NULL),
+(15, 'Footware', NULL),
+(16, 'Jewelery & Accessories', NULL),
+(17, 'Food & Beverages', NULL),
+(18, 'Furniture & Home Decor', NULL),
+(19, 'Sports & Fitness', NULL);
 
 -- --------------------------------------------------------
 
@@ -66,7 +71,9 @@ CREATE TABLE `customers` (
 INSERT INTO `customers` (`id`, `name`, `phone`, `email`, `address`, `created_at`, `updated_at`) VALUES
 (1, 'Helen', '9988776655', 'helen1@gmail.com', 'Dhaka ,Bangladesh', '2025-08-26 10:39:00', '2025-08-26 10:39:00'),
 (2, 'Purno', '56789766', 'purno@gmail.com', 'Dhaka,Bangladesh', '2025-08-26 11:46:56', '2025-08-26 11:46:56'),
-(3, 'Crystiana', '9988006658', 'tiana@gmail.com', 'Australia', '2025-08-28 12:26:59', '2025-08-28 12:26:59');
+(3, 'Crystiana', '9988006658', 'tiana@gmail.com', 'Australia', '2025-08-28 12:26:59', '2025-08-28 12:26:59'),
+(5, 'Saheb', '01928093578', 'saheb@gmail.com', 'Noakhali, Bangladesh', '2025-08-30 09:09:36', '2025-08-30 09:09:36'),
+(6, 'Osman', '776890655', 'Os@gmail.com', 'Barisal, Bangladesh', '2025-08-30 09:10:35', '2025-08-30 09:10:35');
 
 -- --------------------------------------------------------
 
@@ -108,26 +115,6 @@ INSERT INTO `products` (`id`, `product_name`, `price`, `stock`, `category_id`, `
 (2, 'Tablet', 110000.00, 11, 1, '2025-08-18 00:43:18', '2025-08-24 03:50:30', '2025-08-22'),
 (3, 'Sunscreen', 200000.00, 200, 3, '2025-08-18 13:12:53', '2025-08-24 04:03:16', '2025-08-23'),
 (4, 'Notebook', 60000.00, 300, 9, '2025-08-19 21:26:22', '2025-08-19 21:26:22', '2026-08-10');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `product_categories`
---
-
-CREATE TABLE `product_categories` (
-  `id` int(11) NOT NULL,
-  `category_name` varchar(180) NOT NULL,
-  `parent_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `product_categories`
---
-
-INSERT INTO `product_categories` (`id`, `category_name`, `parent_id`) VALUES
-(1, 'Electronics', NULL),
-(3, 'Cosmetics', NULL);
 
 -- --------------------------------------------------------
 
@@ -230,7 +217,10 @@ INSERT INTO `sales` (`id`, `customer_id`, `total_amount`, `sale_date`) VALUES
 (5, 2, 100000.00, '2025-08-27 12:26:30'),
 (6, 2, 100000.00, '2025-08-27 12:27:08'),
 (7, 2, 100000.00, '2025-08-27 12:27:24'),
-(8, 3, 60000.00, '2025-08-28 12:33:39');
+(8, 3, 60000.00, '2025-08-28 12:33:39'),
+(11, 5, 290000.00, '2025-08-30 09:52:27'),
+(12, 5, 10000.00, '2025-08-30 09:53:34'),
+(13, 2, 64500.00, '2025-08-30 10:15:24');
 
 -- --------------------------------------------------------
 
@@ -252,7 +242,8 @@ CREATE TABLE `sales_return` (
 
 INSERT INTO `sales_return` (`id`, `sale_id`, `product_id`, `quantity_returned`, `return_date`) VALUES
 (1, 8, 5, 5, '2025-08-28 12:43:23'),
-(2, 8, 5, 5, '2025-08-28 12:43:55');
+(2, 8, 5, 5, '2025-08-28 12:43:55'),
+(3, 13, 4, 2, '2025-08-30 10:19:16');
 
 -- --------------------------------------------------------
 
@@ -282,7 +273,11 @@ INSERT INTO `sale_items` (`id`, `sale_id`, `stock_id`, `quantity`, `unit_price`,
 (9, 5, 4, 1, 100000.00, 100000.00),
 (10, 6, 4, 1, 100000.00, 100000.00),
 (11, 7, 4, 1, 100000.00, 100000.00),
-(12, 8, 5, 20, 3000.00, 60000.00);
+(12, 8, 5, 20, 3000.00, 60000.00),
+(13, 11, 6, 290, 1000.00, 290000.00),
+(14, 12, 6, 10, 1000.00, 10000.00),
+(15, 13, 5, 20, 3000.00, 60000.00),
+(16, 13, 4, 10, 450.00, 4500.00);
 
 -- --------------------------------------------------------
 
@@ -309,10 +304,11 @@ CREATE TABLE `stock` (
 --
 
 INSERT INTO `stock` (`id`, `product_name`, `product_category_id`, `quantity`, `purchase_price`, `sale_price`, `manufacture_date`, `expiry_date`, `vendor_id`, `created_at`, `updated_at`) VALUES
-(1, 'Keyboard', 1, 99, 80000.00, 100000.00, '0000-00-00', '2030-08-20', 1, '2025-08-25 00:55:11', NULL),
+(1, 'Keyboard', 1, 99, 700.00, 1000.00, NULL, '2030-08-20', 1, '2025-08-25 00:55:11', '2025-08-30 09:47:32'),
 (2, 'Monitor', 1, 88, 80000.00, 100000.00, '2025-08-08', '2030-08-20', 1, '2025-08-25 01:09:36', '2025-08-25 09:10:39'),
-(4, 'Facewash', 3, 395, 80000.00, 100000.00, '2025-08-25', '2027-06-08', 2, '2025-08-27 09:17:19', NULL),
-(5, 'Foundation', 3, 390, 2000.00, 3000.00, '2025-08-20', '2027-01-12', 2, '2025-08-27 12:21:30', '2025-08-28 12:25:38');
+(4, 'Facewash', 3, 387, 300.00, 450.00, '2025-08-25', '2027-06-08', 2, '2025-08-27 09:17:19', '2025-08-30 09:48:21'),
+(5, 'Foundation', 3, 370, 2000.00, 3000.00, '2025-08-20', '2027-01-12', 2, '2025-08-27 12:21:30', '2025-08-28 12:25:38'),
+(6, 'T-Shirt', 13, 0, 800.00, 1000.00, '2025-08-28', '2026-10-28', 1, '2025-08-30 09:38:25', '2025-08-30 09:46:59');
 
 -- --------------------------------------------------------
 
@@ -398,13 +394,6 @@ ALTER TABLE `expired_products`
 --
 ALTER TABLE `products`
   ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `product_categories`
---
-ALTER TABLE `product_categories`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `parent_id` (`parent_id`);
 
 --
 -- Indexes for table `purchases`
@@ -496,13 +485,13 @@ ALTER TABLE `vendors`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `expired_products`
@@ -514,12 +503,6 @@ ALTER TABLE `expired_products`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
--- AUTO_INCREMENT for table `product_categories`
---
-ALTER TABLE `product_categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
@@ -556,25 +539,25 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `sales_return`
 --
 ALTER TABLE `sales_return`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `sale_items`
 --
 ALTER TABLE `sale_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `stock`
 --
 ALTER TABLE `stock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`
