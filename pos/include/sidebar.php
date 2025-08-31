@@ -68,7 +68,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="home.php?page=4" class="nav-link">
+                            <a href="home.php?page=7" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Add Category</p>
                             </a>
@@ -91,7 +91,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="home.php?page=7" class="nav-link">
+                            <a href="home.php?page=9" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Add/Manage Products</p>
                             </a>
@@ -109,7 +109,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="home.php?page=8" class="nav-link">
+                            <a href="home.php?page=20" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Manage Vendors</p>
                             </a>
@@ -127,7 +127,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="home.php?page=10" class="nav-link">
+                            <a href="home.php?page=22" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Manage Customers</p>
                             </a>
@@ -145,19 +145,19 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="home.php?page=23" class="nav-link">
+                            <a href="home.php?page=16" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Create Purchase</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="home.php?page=25" class="nav-link">
+                            <a href="home.php?page=17" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Purchase History</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                    <a href="home.php?page=28" class="nav-link">
+                    <a href="home.php?page=19" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                         <p>
                                 Purchase Return
@@ -177,13 +177,13 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="home.php?page=11" class="nav-link">
+                            <a href="home.php?page=12" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Create Sale</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="home.php?page=12" class="nav-link">
+                            <a href="home.php?page=13" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Sales History</p>
                             </a>
@@ -207,13 +207,13 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="home.php?page=22" class="nav-link">
+                            <a href="home.php?page=21" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Stock</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="home.php?page=23" class="nav-link">
+                            <a href="home.php?page=24" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Expired Products</p>
                             </a>
@@ -231,31 +231,37 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="home.php?page=reports_sales" class="nav-link">
+                            <a href="home.php?page=26" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Purchase Report</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="home.php?page=27" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Sales Report</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="home.php?page=reports_inventory" class="nav-link">
+                            <a href="home.php?page=28" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Inventory Report</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="home.php?page=reports_profit" class="nav-link">
+                            <a href="home.php?page=29" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Profit/Loss Report</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="home.php?page=reports_customers" class="nav-link">
+                            <a href="home.php?page=30" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Customers Report</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="home.php?page=reports_vendors" class="nav-link">
+                            <a href="home.php?page=31" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Vendors Report</p>
                             </a>

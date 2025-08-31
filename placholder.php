@@ -92,47 +92,43 @@ switch ($page) {
         break;
     case "23":
         // Create Purchase
-        include __DIR__ . '/pages/customer/create_purchase.php';
+        include __DIR__ . '/pages/customer/manage_customer.php';
         break;
     case "24":
-        // Purchase History
-        include __DIR__ . '/pages/purchase/purchase_history.php';
+        // Create Purchase
+        include __DIR__ . '/pages/customer/edit_customer.php';
         break;
     case "25":
         // Purchase Invoice
-        include __DIR__ . '/pages/purchase/purchase_invoice.php';
+        include __DIR__ . '/pages/expired_products/expired_products.php';
         break;
     case "26":
         // Add Product
-        include __DIR__ . '/pages/product/add_product.php';
+        include __DIR__ . '/pages/expired_products/move_to_expired.php';
         break;
-    case "27":
-        // Manage Vendors (Duplicate)
-        include __DIR__ . '/pages/vendor/manage_vendor.php';
+        case "27":
+        // Sales Report
+        include __DIR__ . '/pages/reports/purchase_report.php';
         break;
     case "28":
-        // Purchase Return
-        include __DIR__ . '/pages/purchase/purchase_return.php';
-        break;
-    case "reports_sales":
         // Sales Report
-        include __DIR__ . '/pages/reports/reports_sales.php';
+        include __DIR__ . '/pages/reports/sales_report.php';
         break;
-    case "reports_inventory":
+    case "29":
         // Inventory Report
-        include __DIR__ . '/pages/reports/reports_inventory.php';
+        include __DIR__ . '/pages/reports/inventory_report.php';
         break;
-    case "reports_profit":
+    case "30":
         // Profit/Loss Report
-        include __DIR__ . '/pages/reports/reports_profit.php';
+        include __DIR__ . '/pages/reports/profit&loss_report.php';
         break;
-    case "reports_customers":
+    case "31":
         // Customers Report
-        include __DIR__ . '/pages/reports/reports_customers.php';
+        include __DIR__ . '/pages/reports/customers_report.php';
         break;
-    case "reports_vendors":
+    case "32":
         // Vendors Report
-        include __DIR__ . '/pages/reports/reports_vendors.php';
+        include __DIR__ . '/pages/reports/vendors_report.php';
         break;
     default:
         // Default to a 404 page or dashboard if the page is not found.
