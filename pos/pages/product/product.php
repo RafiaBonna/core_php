@@ -1,18 +1,18 @@
 <?php
-// Database connection file টি সংযুক্ত করা হচ্ছে
+// Include the database connection file
 include_once __DIR__ . '/../../config.php';
 
 $message = '';
 
-// যদি 'add_product' ফর্ম সাবমিট করা হয়
+// If the 'add_product' form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     
-    // শুধুমাত্র পণ্যের নাম এবং ক্যাটাগরি আইডি নেওয়া হচ্ছে
+    // Only the product name and category ID are taken
     $product_name = mysqli_real_escape_string($conn, $_POST['product_name']);
     $category_id = mysqli_real_escape_string($conn, $_POST['category_id']);
     
-    // নতুন পণ্য products টেবিলে ইনসার্ট করার জন্য SQL কোয়েরি
-    // এখানে 'created_at' কলামটি বাদ দেওয়া হয়েছে
+    // SQL query to insert a new product into the products table
+    // The 'created_at' column has been removed here
     $sql_insert_product = "INSERT INTO products (product_name, category_id) VALUES (?, ?)";
     $stmt_product = $conn->prepare($sql_insert_product);
     if (!$stmt_product) {
@@ -20,19 +20,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
     } else {
         $stmt_product->bind_param("si", $product_name, $category_id);
         if ($stmt_product->execute()) {
-            $message = "<div class='alert alert-success'>পণ্য সফলভাবে যুক্ত করা হয়েছে!</div>";
+            $message = "<div class='alert alert-success'>Product added successfully!</div>";
         } else {
-            $message = "<div class='alert alert-danger'>পণ্য যুক্ত করার সময় ত্রুটি: " . $stmt_product->error . "</div>";
+            $message = "<div class='alert alert-danger'>Error adding product: " . $stmt_product->error . "</div>";
         }
         $stmt_product->close();
     }
 }
 
-// যদি 'delete_id' URL-এ থাকে, তবে পণ্য মুছে ফেলার কোড রান করবে
+// If 'delete_id' is in the URL, the product deletion code will run
 if (isset($_GET['delete_id'])) {
     $delete_id = mysqli_real_escape_string($conn, $_GET['delete_id']);
 
-    // products টেবিল থেকে পণ্যটি মুছে ফেলা হচ্ছে
+    // Deleting the product from the products table
     $sql_delete_product = "DELETE FROM products WHERE id = ?";
     $stmt_delete_product = $conn->prepare($sql_delete_product);
     if (!$stmt_delete_product) {
@@ -40,15 +40,15 @@ if (isset($_GET['delete_id'])) {
     } else {
         $stmt_delete_product->bind_param("i", $delete_id);
         if ($stmt_delete_product->execute()) {
-            $message = "<div class='alert alert-success'>পণ্য সফলভাবে মুছে ফেলা হয়েছে!</div>";
+            $message = "<div class='alert alert-success'>Product deleted successfully!</div>";
         } else {
-            $message = "<div class='alert alert-danger'>পণ্য মুছে ফেলার সময় ত্রুটি: " . $stmt_delete_product->error . "</div>";
+            $message = "<div class='alert alert-danger'>Error deleting product: " . $stmt_delete_product->error . "</div>";
         }
         $stmt_delete_product->close();
     }
 }
 
-// ড্রপডাউন মেনুর জন্য ডেটাবেজ থেকে সমস্ত ক্যাটাগরি ডেটা আনা হচ্ছে
+// Fetching all category data from the database for the dropdown menu
 $sql_categories = "SELECT id, category_name FROM categories ORDER BY category_name ASC";
 $result_categories = $conn->query($sql_categories);
 $categories = [];
@@ -58,7 +58,7 @@ if ($result_categories && $result_categories->num_rows > 0) {
     }
 }
 
-// টেবিলে দেখানোর জন্য ডেটাবেজ থেকে সমস্ত পণ্যের তথ্য আনা হচ্ছে
+// Fetching all product information from the database to display in the table
 $sql_products = "
     SELECT 
         p.id, 
@@ -133,21 +133,21 @@ if ($result_products && $result_products->num_rows > 0) {
                 <table id="productsTable" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Product Name</th>
-                            <th>Category</th>
-                            <th>Actions</th>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Product Name</th>
+                            <th class="text-center">Category</th>
+                            <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($products)): ?>
                             <?php foreach ($products as $product): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($product['id']); ?></td>
-                                    <td><?php echo htmlspecialchars($product['product_name']); ?></td>
-                                    <td><?php echo htmlspecialchars($product['category_name']); ?></td>
+                                    <td class="text-center"><?php echo htmlspecialchars($product['id']); ?></td>
+                                    <td class="text-center"><?php echo htmlspecialchars($product['product_name']); ?></td>
+                                    <td class="text-center"><?php echo htmlspecialchars($product['category_name']); ?></td>
                                     <td class="d-flex justify-content-center">
-                                        <a href="home.php?page=9&id=<?php echo htmlspecialchars($product['id']); ?>" class="btn btn-sm btn-info me-2">Edit</a>
+                                        <a href="home.php?page=9&id=<?php echo htmlspecialchars($product['id']); ?>" class="btn btn-sm btn-info">Edit</a>&nbsp;
                                         <a href="home.php?page=7&delete_id=<?php echo htmlspecialchars($product['id']); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
                                     </td>
                                 </tr>

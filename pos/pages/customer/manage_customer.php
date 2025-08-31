@@ -77,7 +77,7 @@ if ($result && $result->num_rows > 0) {
 ?>
 
 
-   <div class="content-fluid" style="min-height: 1000.6px;">
+    <div class="content-fluid" style="min-height: 1000.6px;">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-1">
@@ -95,7 +95,6 @@ if ($result && $result->num_rows > 0) {
     </div>
 
     <div class="container-fluid">
-        <!-- Add Customer Form - Full Width on Top -->
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card card-primary">
@@ -128,7 +127,6 @@ if ($result && $result->num_rows > 0) {
             </div>
         </div>
 
-        <!-- Customers Table - Full Width Below Form -->
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -136,7 +134,7 @@ if ($result && $result->num_rows > 0) {
                         <h3 class="card-title">All Customers</h3>
                     </div>
                     <div class="card-body p-0">
-                        <table class="table table-striped table-hover">
+                        <table class="table table-bordered table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th class="text-center">ID</th>
@@ -154,8 +152,8 @@ if ($result && $result->num_rows > 0) {
                                             <td><?= htmlspecialchars($customer['name']); ?></td>
                                             <td><?= htmlspecialchars($customer['email']); ?></td>
                                             <td><?= htmlspecialchars($customer['phone']); ?></td>
-                                            <td class="d-flex justify-content-center">
-                                                <a href="home.php?page=19&id=<?= $customer['id']; ?>" class="btn btn-sm btn-primary me-2">Edit</a>
+                                            <td class="d-flex justify-content-center gap-2">
+                                                <a href="home.php?page=19&id=<?= $customer['id']; ?>" class="btn btn-sm btn-primary">Edit</a> &nbsp;
                                                 <a href="home.php?page=10&delete_id=<?= $customer['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this customer?');">Delete</a>
                                             </td>
                                         </tr>

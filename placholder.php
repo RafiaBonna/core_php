@@ -22,7 +22,7 @@ switch ($page) {
         include __DIR__ . '/pages/user/edit_user.php';
         break;
     case "4":
-        include __DIR__ . '/pages/category/add_category.php';
+        include __DIR__ . '/pages/user/delete_user.php';
         break;
     case "5":
         include __DIR__ . '/pages/category/manage_category.php';
@@ -31,60 +31,56 @@ switch ($page) {
         include __DIR__ . '/pages/category/edit_category.php';
         break;
     case "7":
-        // Manage Products
-        include __DIR__ . '/pages/product/product.php';
+    
+        include __DIR__ . '/pages/category/add_category.php';
         break;
     case "8":
-        // Manage Vendors
-        include __DIR__ . '/pages/vendor/manage_vendor.php';
+       include __DIR__ . '/pages/category/delete_category.php';
         break;
     case "9":
-        // Edit Product
-        include __DIR__ . '/pages/product/edit_product.php';
+        include __DIR__ . '/pages/product/product.php';
         break;
     case "10":
-        // Edit Vendor
-        include __DIR__ . '/pages/vendor/edit_vendor.php';
+       include __DIR__ . '/pages/product/process_expired_product.php';
         break;
     case "11":
-        // POS Sales
-        include __DIR__ . '/pages/sales/pos_sales.php';
+       include __DIR__ . '/pages/product/edit_product.php';
         break;
     case "12":
         // Sales History
-        include __DIR__ . '/pages/sales/sales_history.php';
+        include __DIR__ . '/pages/sales/create_sale.php';
         break;
     case "13":
         // Customer
-        include __DIR__ . '/pages/customer/manage_customer.php';
+      include __DIR__ . '/pages/sales/sales_history.php';
         break;
     case "14":
         // Add Customer
-        include __DIR__ . '/pages/customer/edit_customer.php';
+        include __DIR__ . '/pages/sales/sales_return.php';
         break;
     case "15":
         // Edit Customer
-        include __DIR__ . '/pages/customer/editt_customer.php';
+        include __DIR__ . '/pages/sales/invoice.php';
         break;
     case "16":
-        // Expense Category
-        include __DIR__ . '/pages/expense/expense_category.php';
+        // Create Purchase
+        include __DIR__ . '/pages/purchase/create_purchase.php';
         break;
     case "17":
-        // Add Expense
-        include __DIR__ . '/pages/expense/add_expense.php';
+         // Purchase History
+        include __DIR__ . '/pages/purchase/purchase_history.php';
         break;
     case "18":
-        // Manage Expense
-        include __DIR__ . '/pages/expense/manage_expense.php';
+         // Purchase Invoice
+        include __DIR__ . '/pages/purchase/purchase_invoice.php';
         break;
     case "19":
-        // Edit Expense
-        include __DIR__ . '/pages/customer/edit_customer.php';
+        // Purchase Invoice
+        include __DIR__ . '/pages/purchase/purchase_return.php';
         break;
     case "20":
-        // Manage Sales Return
-        include __DIR__ . '/pages/sales_return/sales_return.php';
+         // Manage Vendors
+        include __DIR__ . '/pages/vendor/manage_vendor.php';
         break;
     case "21":
         // Stock Report
@@ -92,11 +88,11 @@ switch ($page) {
         break;
     case "22":
         // Expired Products
-        include __DIR__ . '/pages/expired_products/expired_products.php';
+        include __DIR__ . '/pages/customer/expired_products.php';
         break;
     case "23":
         // Create Purchase
-        include __DIR__ . '/pages/purchase/create_purchase.php';
+        include __DIR__ . '/pages/customer/create_purchase.php';
         break;
     case "24":
         // Purchase History

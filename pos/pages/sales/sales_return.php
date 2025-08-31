@@ -5,10 +5,10 @@ $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_return'])) {
     $sale_id = intval($_POST['sale_id']);
-    $product_id = intval($_POST['product_id']);
+    $stock_id = intval($_POST['product_id']); // Renamed for clarity with schema
     $quantity_returned = intval($_POST['quantity_returned']);
 
-    if ($sale_id <= 0 || $product_id <= 0 || $quantity_returned <= 0) {
+    if ($sale_id <= 0 || $stock_id <= 0 || $quantity_returned <= 0) {
         $message = "<div class='alert alert-danger'>Invalid input values.</div>";
     } else {
         $conn->begin_transaction();
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_return'])) {
             $check_sql = "SELECT quantity FROM sale_items WHERE sale_id = ? AND stock_id = ?";
             $stmt_check = $conn->prepare($check_sql);
             if (!$stmt_check) throw new Exception("Prepare failed: " . $conn->error);
-            $stmt_check->bind_param("ii", $sale_id, $product_id);
+            $stmt_check->bind_param("ii", $sale_id, $stock_id);
             $stmt_check->execute();
             $result = $stmt_check->get_result();
             if ($result->num_rows === 0) throw new Exception("Product not found in this sale.");
@@ -25,10 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_return'])) {
             $sold_quantity = $sale_item['quantity'];
 
             // 2. Check previous returns.
-            $returned_sql = "SELECT SUM(quantity_returned) AS total_returned FROM sales_return WHERE sale_id = ? AND product_id = ?";
+            // Changed from product_id to stock_id
+            $returned_sql = "SELECT SUM(quantity_returned) AS total_returned FROM sales_return WHERE sale_id = ? AND stock_id = ?";
             $stmt_returned = $conn->prepare($returned_sql);
             if (!$stmt_returned) throw new Exception("Prepare failed: " . $conn->error);
-            $stmt_returned->bind_param("ii", $sale_id, $product_id);
+            $stmt_returned->bind_param("ii", $sale_id, $stock_id);
             $stmt_returned->execute();
             $returned_result = $stmt_returned->get_result();
             $returned_row = $returned_result->fetch_assoc();
@@ -40,17 +41,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_return'])) {
             }
 
             // 3. Insert into sales_return table.
-            $insert_return_sql = "INSERT INTO sales_return (sale_id, product_id, quantity_returned, return_date) VALUES (?, ?, ?, NOW())";
+            // Changed from product_id to stock_id
+            $insert_return_sql = "INSERT INTO sales_return (sale_id, stock_id, quantity_returned, return_date) VALUES (?, ?, ?, NOW())";
             $stmt_insert_return = $conn->prepare($insert_return_sql);
             if (!$stmt_insert_return) throw new Exception("Prepare failed: " . $conn->error);
-            $stmt_insert_return->bind_param("iii", $sale_id, $product_id, $quantity_returned);
+            $stmt_insert_return->bind_param("iii", $sale_id, $stock_id, $quantity_returned);
             $stmt_insert_return->execute();
 
             // 4. Update stock table.
             $update_stock_sql = "UPDATE stock SET quantity = quantity + ? WHERE id = ?";
             $stmt_update_stock = $conn->prepare($update_stock_sql);
             if (!$stmt_update_stock) throw new Exception("Prepare failed: " . $conn->error);
-            $stmt_update_stock->bind_param("ii", $quantity_returned, $product_id);
+            $stmt_update_stock->bind_param("ii", $quantity_returned, $stock_id);
             $stmt_update_stock->execute();
             
             $conn->commit();
@@ -72,20 +74,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_return'])) {
 $sales_sql = "SELECT id FROM sales ORDER BY id DESC";
 $sales_result = $conn->query($sales_sql);
 $sales = [];
-if ($sales_result->num_rows > 0) {
+if ($sales_result && $sales_result->num_rows > 0) {
     while ($row = $sales_result->fetch_assoc()) {
         $sales[] = $row;
     }
+} else {
+    $message .= "<div class='alert alert-warning'>No sales found or failed to retrieve sales data.</div>";
 }
 
 // Fetch products for the dropdown
-$products_sql = "SELECT id, product_name FROM stock ORDER BY product_name ASC";
+// Changed the query to fetch product names from the products table
+$products_sql = "SELECT id, product_name FROM products ORDER BY product_name ASC";
 $products_result = $conn->query($products_sql);
 $products = [];
-if ($products_result->num_rows > 0) {
+if ($products_result && $products_result->num_rows > 0) {
     while ($row = $products_result->fetch_assoc()) {
         $products[] = $row;
     }
+} else {
+    $message .= "<div class='alert alert-warning'>No products found or failed to retrieve product data.</div>";
 }
 ?>
 

@@ -1,7 +1,7 @@
-<footer class="main-footer">
+<footer class="main-footer bg-dark text-center">
     <div class="float-right d-none d-sm-block">
     </div>
-    <strong>Copyright &copy; 2025 <b>DREAM POS</b>.</strong> All rights reserved by Rafia Hawlader.
+    <strong>Copyright &copy; 2025 <b>DREAM POS</b>.</strong> All rights reserved by <b> Rafia Hawlader </b>.
 </footer>
 
 <aside class="control-sidebar control-sidebar-dark"></aside>
