@@ -34,23 +34,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_vendor'])) {
                 }
                 $stmt_insert->close();
             } else {
-                $message = "<div class='alert alert-danger'>Database error: " . $conn->error . "</div>";
+                $message = "<div class='alert alert-danger'>SQL prepare failed: " . $conn->error . "</div>";
             }
         }
         $stmt_check->close();
-    } else {
-        $message = "<div class='alert alert-danger'>Database error: " . $conn->error . "</div>";
     }
 }
 
-// Handle deleting a vendor
-if (isset($_GET['delete_id'])) {
-    $delete_id = mysqli_real_escape_string($conn, $_GET['delete_id']);
+// Handle vendor deletion
+if (isset($_GET['delete_id']) && is_numeric($_GET['delete_id'])) {
+    $vendor_id = intval($_GET['delete_id']);
 
+    // Prepare and execute the delete query
     $sql_delete = "DELETE FROM vendors WHERE id = ?";
     $stmt_delete = $conn->prepare($sql_delete);
     if ($stmt_delete) {
-        $stmt_delete->bind_param("i", $delete_id);
+        $stmt_delete->bind_param("i", $vendor_id);
         if ($stmt_delete->execute()) {
             $message = "<div class='alert alert-success'>Vendor deleted successfully!</div>";
         } else {
@@ -58,55 +57,75 @@ if (isset($_GET['delete_id'])) {
         }
         $stmt_delete->close();
     } else {
-        $message = "<div class='alert alert-danger'>Database error: " . $conn->error . "</div>";
+        $message = "<div class='alert alert-danger'>SQL prepare failed: " . $conn->error . "</div>";
     }
+    // Redirect to the same page to prevent re-submission on refresh
+    // header("Location: home.php?page=8&message=" . urlencode(strip_tags($message)));
+    // exit();
 }
 
-// Fetch all vendors from the database to display in the table
-$sql_vendors = "SELECT id, name, created_at FROM vendors ORDER BY created_at DESC";
-$result_vendors = $conn->query($sql_vendors);
+// Fetch all vendors from the database to display
 $vendors = [];
-if ($result_vendors->num_rows > 0) {
-    while ($row = $result_vendors->fetch_assoc()) {
+$sql_select = "SELECT id, name, created_at FROM vendors ORDER BY created_at DESC";
+$result = $conn->query($sql_select);
+
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
         $vendors[] = $row;
     }
 }
 ?>
 
-<div class="container mt-4 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card card-primary">
-                <div class="card-header bg-primary">
-                    <h4 class="card-title text-white">Add New Vendor</h4>
-                </div>
-                <div class="card-body">
-                    <?php echo $message; ?>
-                    <form action="" method="POST">
-                        <div class="form-group mb-3">
-                            <label for="vendor_name">Vendor Name</label>
-                            <input type="text" name="vendor_name" id="vendor_name" class="form-control" required>
-                        </div>
-                        <button type="submit" name="add_vendor" class="btn btn-primary btn-block">Add Vendor</button>
-                    </form>
-                </div>
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Manage Vendors</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Vendors</li>
+                </ol>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="card card-info mt-5">
-        <div class="card-header bg-info">
-            <h4 class="card-title text-white ">Manage Vendors</h4>
+<div class="container-fluid">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">Add New Vendor</h3>
+        </div>
+        <form method="post" action="home.php?page=8">
+            <div class="card-body">
+                <?php echo $message; ?>
+                <div class="form-group">
+                    <label for="vendor_name">Vendor Name</label>
+                    <input type="text" name="vendor_name" id="vendor_name" class="form-control" placeholder="Enter vendor name" required>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" name="add_vendor" class="btn btn-primary">Add Vendor</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">All Vendors</h3>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover table-sm">
-                    <thead class="thead-dark">
-                        <tr class="text-center">
-                            <th>ID</th>
-                            <th>Vendor Name</th>
-                            <th>Created At</th>
-                            <th>Actions</th>
+                <table id="vendorTable" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Vendor Name</th>
+                            <th class="text-center">Created At</th>
+                            <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,7 +136,7 @@ if ($result_vendors->num_rows > 0) {
                                     <td class="text-center"><?php echo htmlspecialchars($vendor['name']); ?></td>
                                     <td class="text-center"><?php echo htmlspecialchars($vendor['created_at']); ?></td>
                                     <td class="d-flex justify-content-center">
-                                        <a href="home.php?page=8&delete_id=<?php echo $vendor['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this vendor?');">Delete</a>
+                                        <a href="home.php?page=20&delete_id=<?php echo $vendor['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('আপনি কি নিশ্চিত যে আপনি এই ভেন্ডরটি মুছে ফেলতে চান?');">Delete</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

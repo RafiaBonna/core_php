@@ -147,8 +147,8 @@ if ($result_products && $result_products->num_rows > 0) {
                                     <td class="text-center"><?php echo htmlspecialchars($product['product_name']); ?></td>
                                     <td class="text-center"><?php echo htmlspecialchars($product['category_name']); ?></td>
                                     <td class="d-flex justify-content-center">
-                                        <a href="home.php?page=9&id=<?php echo htmlspecialchars($product['id']); ?>" class="btn btn-sm btn-info">Edit</a>&nbsp;
-                                        <a href="home.php?page=7&delete_id=<?php echo htmlspecialchars($product['id']); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
+                                        <a href="home.php?page=11&id=<?php echo htmlspecialchars($product['id']); ?>" class="btn btn-sm btn-info">Edit</a>&nbsp;
+                                        <a href="home.php?page=9&delete_id=<?php echo htmlspecialchars($product['id']); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

@@ -31,9 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_product'])) {
         $stmt_product->bind_param("sii", $product_name, $category_id, $product_id);
         
         if ($stmt_product->execute()) {
-            $message = "<div class='alert alert-success'>পণ্য সফলভাবে আপডেট করা হয়েছে!</div>";
+            $message = "<div class='alert alert-success'>Product updated successfully!</div>";
         } else {
-            $message = "<div class='alert alert-danger'>পণ্য আপডেট করার সময় ত্রুটি: " . $stmt_product->error . "</div>";
+            $message = "<div class='alert alert-danger'>Error updating product: " . $stmt_product->error . "</div>";
         }
         $stmt_product->close();
     } else {
