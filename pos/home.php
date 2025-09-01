@@ -63,6 +63,8 @@ define('BASE_PATH', __DIR__ . '/include/');
 <script src="dist/plugins/daterangepicker/daterangepicker.js"></script>
 <script src="dist/plugins/moment/moment.min.js"></script>
 <script src="dist/plugins/chart.js/Chart.min.js"></script> <script>
+<script src="dist/dist/js/demo.js"></script>
+<script src="dist/dist/js/salescript.js"></script>
 <script>
     // Custom script
 </script>

@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_customer'])) {
             <?php endif; ?>
             
             <?php if (!empty($customer_data)): ?>
-                <form action="home.php?page=19&id=<?php echo htmlspecialchars($customer_data['id']); ?>" method="POST">
+               <form action="home.php?page=23&id=<?php echo htmlspecialchars($customer_data['id']); ?>" method="POST">
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($customer_data['id']); ?>">
                     <div class="form-group mb-3">
                         <label for="customer_name">Customer Name</label>

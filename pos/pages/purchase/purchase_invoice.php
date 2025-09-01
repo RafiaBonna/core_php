@@ -3,11 +3,11 @@
 include_once __DIR__ . '/../../config.php';
 
 // Check if a purchase ID is provided in the URL.
-if (!isset($_GET['purchase_id'])) {
-    die("Error: No purchase ID provided.");
+if (!isset($_GET['purchase_id']) || !is_numeric($_GET['purchase_id'])) {
+    die("Error: No valid purchase ID provided.");
 }
 
-$purchase_id = $_GET['purchase_id'];
+$purchase_id = intval($_GET['purchase_id']);
 
 // Check if the database connection instance exists.
 if (!isset($conn)) {
@@ -19,28 +19,29 @@ $sql_purchase = "SELECT p.*, v.name AS vendor_name FROM purchases p LEFT JOIN ve
 $stmt_purchase = $conn->prepare($sql_purchase);
 
 if (!$stmt_purchase) {
-    die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+    die("Prepare failed for purchase query: (" . $conn->errno . ") " . $conn->error);
 }
 
 $stmt_purchase->bind_param("i", $purchase_id);
 $stmt_purchase->execute();
 $result_purchase = $stmt_purchase->get_result();
 $purchase = $result_purchase->fetch_assoc();
+$stmt_purchase->close();
 
 if (!$purchase) {
     die("Error: No purchase record found for this ID.");
 }
 
-// Fetch the items for the purchase. The query is updated to join with the `products` table
-// to get the product name, as the `stock` table may not have this column.
+// Fetch the items for the purchase.
 $sql_items = "SELECT pi.*, p.product_name FROM purchase_items pi JOIN stock st ON pi.stock_id = st.id JOIN products p ON st.product_id = p.id WHERE pi.purchase_id = ?";
 $stmt_items = $conn->prepare($sql_items);
 if (!$stmt_items) {
-    die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+    die("Prepare failed for items query: (" . $conn->errno . ") " . $conn->error);
 }
 $stmt_items->bind_param("i", $purchase_id);
 $stmt_items->execute();
 $result_items = $stmt_items->get_result();
+$stmt_items->close();
 
 ?>
 
@@ -95,8 +96,7 @@ $result_items = $stmt_items->get_result();
                         To
                         <address>
                             <strong><?php echo htmlspecialchars($purchase['vendor_name'] ?: 'N/A'); ?></strong><br>
-                            <!-- You might add vendor address and contact info here if available -->
-                        </address>
+                            </address>
                     </div>
 
                     <div class="col-sm-4 invoice-col">
@@ -122,11 +122,9 @@ $result_items = $stmt_items->get_result();
                             <tbody>
                                 <?php
                                 $item_counter = 1;
-                                $grand_total = 0;
                                 if ($result_items->num_rows > 0):
                                     while ($item = $result_items->fetch_assoc()):
                                         $subtotal = $item['unit_price'] * $item['quantity'];
-                                        $grand_total += $subtotal;
                                 ?>
                                 <tr>
                                     <td><?php echo $item_counter++; ?></td>
@@ -135,7 +133,11 @@ $result_items = $stmt_items->get_result();
                                     <td><?php echo htmlspecialchars($item['quantity']); ?></td>
                                     <td>$<?php echo number_format($subtotal, 2); ?></td>
                                 </tr>
-                                <?php endwhile; endif; ?>
+                                <?php endwhile; else: ?>
+                                <tr>
+                                    <td colspan="5" class="text-center">No items found for this invoice.</td>
+                                </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -143,7 +145,7 @@ $result_items = $stmt_items->get_result();
 
                 <div class="row mt-3">
                     <div class="col-12 text-right">
-                        <p class="lead"><b>Total: $<?php echo number_format($grand_total, 2); ?></b></p>
+                        <p class="lead"><b>Total: $<?php echo number_format($purchase['total_amount'], 2); ?></b></p>
                     </div>
                 </div>
             </div>

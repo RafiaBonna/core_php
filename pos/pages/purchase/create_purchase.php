@@ -121,8 +121,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['process_purchase'])) 
         // If everything is successful, commit the transaction.
         $conn->commit();
         $message = "Purchase processed successfully!";
-        header("Location: ../../home.php?page=25&status=success&message=" . urlencode($message));
-        exit;
+        // header("Location: ../../home.php?page=25&status=success&message=" . urlencode($message));
+        // exit;
 
     } catch (Exception $e) {
         // If an error occurs, rollback the transaction.

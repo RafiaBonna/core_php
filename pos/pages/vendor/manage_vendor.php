@@ -97,7 +97,7 @@ if ($result && $result->num_rows > 0) {
         <div class="card-header">
             <h3 class="card-title">Add New Vendor</h3>
         </div>
-        <form method="post" action="home.php?page=8">
+       <form method="post" action="home.php?page=20">
             <div class="card-body">
                 <?php echo $message; ?>
                 <div class="form-group">
@@ -136,8 +136,7 @@ if ($result && $result->num_rows > 0) {
                                     <td class="text-center"><?php echo htmlspecialchars($vendor['name']); ?></td>
                                     <td class="text-center"><?php echo htmlspecialchars($vendor['created_at']); ?></td>
                                     <td class="d-flex justify-content-center">
-                                        <a href="home.php?page=20&delete_id=<?php echo $vendor['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('আপনি কি নিশ্চিত যে আপনি এই ভেন্ডরটি মুছে ফেলতে চান?');">Delete</a>
-                                    </td>
+                                       <a href="home.php?page=20&delete_id=<?php echo $vendor['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this vendor?');">Delete</a>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>

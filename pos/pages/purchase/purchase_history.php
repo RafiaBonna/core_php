@@ -51,7 +51,7 @@ $result = $conn->query($sql);
                                 <td><?php echo number_format($row['total_amount'], 2); ?></td>
                                 <td><?php echo date('Y-m-d H:i:s', strtotime($row['purchase_date'])); ?></td>
                                 <td>
-                                    <a href="home.php?page=27&purchase_id=<?php echo htmlspecialchars($row['id']); ?>" class="btn btn-info btn-sm">View Invoice</a>
+                                    <a href="home.php?page=18&purchase_id=<?php echo htmlspecialchars($row['id']); ?>" class="btn btn-info btn-sm">View Invoice</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>

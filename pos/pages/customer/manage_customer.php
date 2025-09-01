@@ -34,8 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_customer'])) {
                     
                     if ($stmt_insert->execute()) {
                         // Redirect with a success message after adding the customer
-                        header("Location: home.php?page=10&status=success&message=" . urlencode("Customer added successfully!"));
-                        exit();
+                        // header("Location: home.php?page=10&status=success&message=" . urlencode("Customer added successfully!"));
+                        // exit();
                     } else {
                         $message = "<div class='alert alert-danger'>Error adding customer: " . $stmt_insert->error . "</div>";
                     }
@@ -67,9 +67,9 @@ if (isset($_GET['delete_id']) && is_numeric($_GET['delete_id'])) {
     } else {
         $message = "<div class='alert alert-danger'>SQL prepare failed: " . $conn->error . "</div>";
     }
-    // Redirect to the same page to prevent re-submission on refresh
-    header("Location: home.php?page=10&message=" . urlencode(strip_tags($message)));
-    exit();
+    // Redirect to the correct page to prevent re-submission on refresh
+    // header("Location: home.php?page=22&message=" . urlencode(strip_tags($message)));
+    // exit();
 }
 
 // Check for messages in the URL
@@ -114,7 +114,7 @@ if ($result && $result->num_rows > 0) {
         <div class="card-header">
             <h3 class="card-title">Add New Customer</h3>
         </div>
-        <form method="post" action="home.php?page=2">
+        <form method="post" action="home.php?page=22">
             <div class="card-body">
                 <?php echo $message; ?>
                 <div class="form-group mb-3">
@@ -167,8 +167,8 @@ if ($result && $result->num_rows > 0) {
                                     <td><?= htmlspecialchars($customer['email']); ?></td>
                                     <td><?= htmlspecialchars($customer['phone']); ?></td>
                                     <td class="d-flex justify-content-center gap-2">
-                                        <a href="home.php?page=19&id=<?= $customer['id']; ?>" class="btn btn-sm btn-primary">Edit</a> &nbsp;
-                                        <a href="home.php?page=10&delete_id=<?= $customer['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this customer?');">Delete</a>
+                                       <a href="home.php?page=23&id=<?= $customer['id']; ?>" class="btn btn-sm btn-primary">Edit</a> &nbsp;
+                                       <a href="home.php?page=22&delete_id=<?= $customer['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this customer?');">Delete</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
