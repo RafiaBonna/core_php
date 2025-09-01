@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 01, 2025 at 07:59 PM
+-- Generation Time: Sep 01, 2025 at 11:44 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -90,6 +90,20 @@ CREATE TABLE `expired_products` (
   `expiry_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `expired_products`
+--
+
+INSERT INTO `expired_products` (`id`, `stock_id`, `quantity_expired`, `expiry_date`) VALUES
+(1, 8, 0, '0000-00-00'),
+(2, 9, 0, '2025-09-01'),
+(3, 9, 0, '2025-09-01'),
+(4, 9, 0, '2025-09-01'),
+(5, 9, 0, '2025-09-01'),
+(6, 9, 0, '2025-09-01'),
+(7, 9, 0, '2025-09-01'),
+(8, 11, 0, '2025-09-01');
+
 -- --------------------------------------------------------
 
 --
@@ -140,7 +154,14 @@ INSERT INTO `purchases` (`id`, `vendor_id`, `total_amount`, `purchase_date`) VAL
 (20, 4, 10000.00, '2025-08-30 21:03:22'),
 (21, 5, 310000.00, '2025-09-01 05:41:39'),
 (22, 5, 310000.00, '2025-09-01 05:42:08'),
-(23, 5, 310000.00, '2025-09-01 05:42:26');
+(23, 5, 310000.00, '2025-09-01 05:42:26'),
+(26, 5, 2000000.00, '2025-09-01 20:06:47'),
+(27, 2, 300000.00, '2025-09-01 20:08:55'),
+(28, 4, 10000.00, '2025-09-01 20:22:40'),
+(29, 9, 60000.00, '2025-09-01 21:04:56'),
+(30, 2, 87000.00, '2025-09-01 21:33:28'),
+(31, 4, 80000.00, '2025-09-01 21:34:31'),
+(32, 9, 80000.00, '2025-09-01 21:48:03');
 
 -- --------------------------------------------------------
 
@@ -172,7 +193,14 @@ INSERT INTO `purchase_items` (`id`, `purchase_id`, `stock_id`, `quantity`, `unit
 (9, 22, 9, 200, 200.00, 0.00),
 (10, 22, 8, 300, 900.00, 0.00),
 (11, 23, 9, 200, 200.00, 0.00),
-(12, 23, 8, 300, 900.00, 0.00);
+(12, 23, 8, 300, 900.00, 0.00),
+(13, 26, 8, 200, 10000.00, 0.00),
+(14, 27, 10, 200, 1500.00, 0.00),
+(15, 28, 9, 50, 200.00, 0.00),
+(16, 29, 11, 300, 200.00, 0.00),
+(17, 30, 11, 300, 290.00, 0.00),
+(18, 31, 11, 400, 200.00, 0.00),
+(19, 32, 9, 400, 200.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -336,8 +364,10 @@ CREATE TABLE `stock` (
 
 INSERT INTO `stock` (`id`, `product_id`, `quantity`, `purchase_price`, `sale_price`, `manufacture_date`, `expiry_date`, `vendor_id`, `created_at`, `updated_at`) VALUES
 (7, 10, 60, 15000.00, 20000.00, '2028-08-24', '2028-08-24', 4, '2025-08-30 20:32:11', '2025-08-30 20:40:36'),
-(8, 3, 820, 900.00, 1200.00, '2025-08-07', '2026-11-25', 5, '2025-08-30 21:02:10', '2025-09-01 05:42:26'),
-(9, 12, 550, 200.00, 300.00, '2025-08-02', '2026-06-09', 5, '2025-09-01 05:41:39', '2025-09-01 06:53:51');
+(8, 3, 0, 10000.00, 15000.00, '2025-09-01', NULL, 5, '2025-08-30 21:02:10', '2025-09-01 20:06:47'),
+(9, 12, 1000, 200.00, 300.00, '2025-08-14', '2025-09-01', 9, '2025-09-01 05:41:39', '2025-09-01 21:48:04'),
+(10, 9, 200, 1500.00, 2000.00, '2025-09-01', '2025-09-02', 2, '2025-09-01 20:08:56', NULL),
+(11, 11, 1000, 200.00, 300.00, '2025-07-31', '2025-09-01', 4, '2025-09-01 21:04:56', '2025-09-01 21:34:31');
 
 -- --------------------------------------------------------
 
@@ -530,7 +560,7 @@ ALTER TABLE `customers`
 -- AUTO_INCREMENT for table `expired_products`
 --
 ALTER TABLE `expired_products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -542,13 +572,13 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `purchases`
 --
 ALTER TABLE `purchases`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `purchase_items`
 --
 ALTER TABLE `purchase_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `purchase_returns`
@@ -590,7 +620,7 @@ ALTER TABLE `sale_items`
 -- AUTO_INCREMENT for table `stock`
 --
 ALTER TABLE `stock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `users`
