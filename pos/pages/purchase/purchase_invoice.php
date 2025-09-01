@@ -9,19 +9,17 @@ if (!isset($_GET['purchase_id']) || !is_numeric($_GET['purchase_id'])) {
 
 $purchase_id = intval($_GET['purchase_id']);
 
-// Check if the database connection instance exists.
-if (!isset($conn)) {
-    die("Error: Database connection not available.");
-}
-
-// Fetch the main purchase record and vendor details.
-$sql_purchase = "SELECT p.*, v.name AS vendor_name FROM purchases p LEFT JOIN vendors v ON p.vendor_id = v.id WHERE p.id = ?";
+// Fetch purchase and vendor details
+$sql_purchase = "SELECT p.*, 
+                        v.name AS vendor_name, 
+                        v.contact_person AS vendor_contact, 
+                        v.phone AS vendor_phone, 
+                        v.email AS vendor_email, 
+                        v.address AS vendor_address
+                 FROM purchases p
+                 LEFT JOIN vendors v ON p.vendor_id = v.id
+                 WHERE p.id = ?";
 $stmt_purchase = $conn->prepare($sql_purchase);
-
-if (!$stmt_purchase) {
-    die("Prepare failed for purchase query: (" . $conn->errno . ") " . $conn->error);
-}
-
 $stmt_purchase->bind_param("i", $purchase_id);
 $stmt_purchase->execute();
 $result_purchase = $stmt_purchase->get_result();
@@ -32,17 +30,17 @@ if (!$purchase) {
     die("Error: No purchase record found for this ID.");
 }
 
-// Fetch the items for the purchase.
-$sql_items = "SELECT pi.*, p.product_name FROM purchase_items pi JOIN stock st ON pi.stock_id = st.id JOIN products p ON st.product_id = p.id WHERE pi.purchase_id = ?";
+// Fetch purchase items
+$sql_items = "SELECT pi.*, pr.product_name 
+              FROM purchase_items pi
+              JOIN stock st ON pi.stock_id = st.id
+              JOIN products pr ON st.product_id = pr.id
+              WHERE pi.purchase_id = ?";
 $stmt_items = $conn->prepare($sql_items);
-if (!$stmt_items) {
-    die("Prepare failed for items query: (" . $conn->errno . ") " . $conn->error);
-}
 $stmt_items->bind_param("i", $purchase_id);
 $stmt_items->execute();
 $result_items = $stmt_items->get_result();
 $stmt_items->close();
-
 ?>
 
 <div class="content-header">
@@ -54,7 +52,7 @@ $stmt_items->close();
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="home.php?page=dashboard">Home</a></li>
-                    <li class="breadcrumb-item"><a href="home.php?page=25">Purchase History</a></li>
+                    <li class="breadcrumb-item"><a href="home.php?page=17">Purchase History</a></li>
                     <li class="breadcrumb-item active">Invoice #<?php echo htmlspecialchars($purchase['id']); ?></li>
                 </ol>
             </div>
@@ -75,33 +73,39 @@ $stmt_items->close();
                 <div class="row">
                     <div class="col-12">
                         <h4>
-                            <i class="fas fa-file-invoice"></i> Purchase Invoice.
+                            <i class="fas fa-file-invoice"></i> Purchase Invoice
                             <small class="float-right">Date: <?php echo date('Y-m-d', strtotime($purchase['purchase_date'])); ?></small>
                         </h4>
                     </div>
                 </div>
 
                 <div class="row invoice-info">
+                    <!-- Vendor (From) -->
                     <div class="col-sm-4 invoice-col">
                         From
                         <address>
+                            <strong><?php echo htmlspecialchars($purchase['vendor_name']); ?></strong><br>
+                            <?php echo nl2br(htmlspecialchars($purchase['vendor_address'] ?? '')); ?><br>
+                            Contact: <?php echo htmlspecialchars($purchase['vendor_contact'] ?? ''); ?><br>
+                            Phone: <?php echo htmlspecialchars($purchase['vendor_phone'] ?? 'N/A'); ?><br>
+                            Email: <?php echo htmlspecialchars($purchase['vendor_email'] ?? 'N/A'); ?>
+                        </address>
+                    </div>
+
+                    <!-- Company (To) -->
+                    <div class="col-sm-4 invoice-col">
+                        To
+                        <address>
                             <strong>DREAM POS</strong><br>
-                            Your Address<br>
-                            Phone: (123) 456-7890<br>
+                            123 Business Street, Dhaka, Bangladesh<br>
+                            Phone: +880 1234 567 890<br>
                             Email: info@dreampos.com
                         </address>
                     </div>
 
+                    <!-- Invoice Info -->
                     <div class="col-sm-4 invoice-col">
-                        To
-                        <address>
-                            <strong><?php echo htmlspecialchars($purchase['vendor_name'] ?: 'N/A'); ?></strong><br>
-                            </address>
-                    </div>
-
-                    <div class="col-sm-4 invoice-col">
-                        <b>Invoice #<?php echo htmlspecialchars($purchase['id']); ?></b><br>
-                        <br>
+                        <b>Invoice #<?php echo htmlspecialchars($purchase['id']); ?></b><br><br>
                         <b>Purchase Date:</b> <?php echo date('d/m/Y', strtotime($purchase['purchase_date'])); ?><br>
                         <b>Total Amount:</b> $<?php echo number_format($purchase['total_amount'], 2); ?>
                     </div>

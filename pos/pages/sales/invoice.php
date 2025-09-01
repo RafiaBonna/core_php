@@ -80,7 +80,7 @@ $result_items = $stmt_items->get_result();
                     <table>
                         <tr>
                             <td class="title">
-                                <img src="../../dist/dist/img/AdminLTELogo.png" style="width:100%; max-width:100px;">
+                               <i class="fas fa-file-invoice"></i> Sales Invoice
                             </td>
                             <td>
                                 Invoice #: <?php echo htmlspecialchars($sale['id']); ?><br>
@@ -97,9 +97,10 @@ $result_items = $stmt_items->get_result();
                     <table>
                         <tr>
                             <td>
-                                Your Company, Inc.<br>
-                                12345 Happy Street<br>
-                                Your City, Your State 12345
+                                 <strong>DREAM POS</strong><br>
+                                123 Business Street, Dhaka, Bangladesh<br>
+                            Phone: +880 1234 567 890<br>
+                            Email: info@dreampos.com
                             </td>
                             <td>
                                 <?php echo htmlspecialchars($sale['customer_name'] ?: 'Guest Customer'); ?><br>

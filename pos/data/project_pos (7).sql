@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 01, 2025 at 09:14 AM
+-- Generation Time: Sep 01, 2025 at 07:59 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -74,7 +74,8 @@ INSERT INTO `customers` (`id`, `name`, `phone`, `email`, `address`, `created_at`
 (3, 'Crystiana', '9988006658', 'tiana@gmail.com', 'Australia', '2025-08-28 12:26:59', '2025-08-28 12:26:59'),
 (5, 'Saheb', '01928093578', 'saheb@gmail.com', 'Noakhali, Bangladesh', '2025-08-30 09:09:36', '2025-08-30 09:09:36'),
 (6, 'Osman Goni', '7768906559', 'Osman@gmail.com', 'Barisal, Bangladesh', '2025-08-30 09:10:35', '2025-08-30 09:10:35'),
-(7, 'Mohor', '3456787867', 'mohor@gmail.com', 'Dhaka', '2025-09-01 09:28:36', NULL);
+(7, 'Mohor', '3456787867', 'mohor@gmail.com', 'Dhaka', '2025-09-01 09:28:36', NULL),
+(9, 'gulzar', NULL, NULL, NULL, '2025-09-01 23:11:23', NULL);
 
 -- --------------------------------------------------------
 
@@ -258,7 +259,8 @@ INSERT INTO `sales` (`id`, `customer_id`, `total_amount`, `sale_date`) VALUES
 (8, 3, 60000.00, '2025-08-28 12:33:39'),
 (11, 5, 290000.00, '2025-08-30 09:52:27'),
 (12, 5, 10000.00, '2025-08-30 09:53:34'),
-(13, 2, 64500.00, '2025-08-30 10:15:24');
+(13, 2, 64500.00, '2025-08-30 10:15:24'),
+(21, 9, 120000.00, '2025-09-01 19:11:23');
 
 -- --------------------------------------------------------
 
@@ -306,7 +308,8 @@ INSERT INTO `sale_items` (`id`, `sale_id`, `stock_id`, `quantity`, `unit_price`,
 (13, 11, 6, 290, 1000.00, 290000.00),
 (14, 12, 6, 10, 1000.00, 10000.00),
 (15, 13, 5, 20, 3000.00, 60000.00),
-(16, 13, 4, 10, 450.00, 4500.00);
+(16, 13, 4, 10, 450.00, 4500.00),
+(17, 21, 8, 100, 1200.00, 120000.00);
 
 -- --------------------------------------------------------
 
@@ -333,7 +336,7 @@ CREATE TABLE `stock` (
 
 INSERT INTO `stock` (`id`, `product_id`, `quantity`, `purchase_price`, `sale_price`, `manufacture_date`, `expiry_date`, `vendor_id`, `created_at`, `updated_at`) VALUES
 (7, 10, 60, 15000.00, 20000.00, '2028-08-24', '2028-08-24', 4, '2025-08-30 20:32:11', '2025-08-30 20:40:36'),
-(8, 3, 920, 900.00, 1200.00, '2025-08-07', '2026-11-25', 5, '2025-08-30 21:02:10', '2025-09-01 05:42:26'),
+(8, 3, 820, 900.00, 1200.00, '2025-08-07', '2026-11-25', 5, '2025-08-30 21:02:10', '2025-09-01 05:42:26'),
 (9, 12, 550, 200.00, 300.00, '2025-08-02', '2026-06-09', 5, '2025-09-01 05:41:39', '2025-09-01 06:53:51');
 
 -- --------------------------------------------------------
@@ -521,7 +524,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `expired_products`
@@ -569,7 +572,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `sales_return`
@@ -581,7 +584,7 @@ ALTER TABLE `sales_return`
 -- AUTO_INCREMENT for table `sale_items`
 --
 ALTER TABLE `sale_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `stock`

@@ -37,7 +37,7 @@ if ($customers) {
 
 // Handle form submission
 $message = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['grand_total'])) {
     $customer_name = trim($_POST['customer_name'] ?? '');
     $total_amount = floatval($_POST['grand_total'] ?? 0);
     $stock_ids = $_POST['stock_id'] ?? [];
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($result->num_rows > 0) {
                 $customer_id = $result->fetch_assoc()['id'];
             } else {
-                $insert_customer = $conn->prepare("INSERT INTO customers (name) VALUES (?)");
+                $insert_customer = $conn->prepare("INSERT INTO customers (name, created_at) VALUES (?, NOW())");
                 $insert_customer->bind_param("s", $customer_name);
                 $insert_customer->execute();
                 $customer_id = $conn->insert_id;
@@ -82,8 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $unit_price = floatval($unit_prices[$i]);
             $total_price = $quantity * $unit_price;
 
-            // Insert into sales_items
-            $sale_item_insert_sql = "INSERT INTO sale_items (sale_id, stock_id, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?)";
+            // Insert into sale_items
+            $sale_item_insert_sql = "INSERT INTO sale_items (sale_id, stock_id, quantity, unit_price, total_price) 
+                                     VALUES (?, ?, ?, ?, ?)";
             $sale_item_stmt = $conn->prepare($sale_item_insert_sql);
             $sale_item_stmt->bind_param("iiidd", $sale_id, $stock_id, $quantity, $unit_price, $total_price);
             $sale_item_stmt->execute();
@@ -97,18 +98,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // All operations successful, commit the transaction
         $conn->commit();
-        $message = "Sale processed successfully!";
+        $message = "✅ Sale processed successfully!";
     } catch (Exception $e) {
         // Something went wrong, rollback the transaction
         $conn->rollback();
-        $message = "Error: " . $e->getMessage();
+        $message = "❌ Error: " . $e->getMessage();
     }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -116,7 +116,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-
 <body>
     <div class="container mt-5">
         <h1>Create New Sale</h1>
@@ -125,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="alert alert-info"><?= htmlspecialchars($message) ?></div>
         <?php endif; ?>
 
-        <form method="POST" action="create_sale.php">
+        <form method="POST" action="">
             <div class="mb-3">
                 <label for="customer_name" class="form-label">Customer Name</label>
                 <input type="text" class="form-control" id="customer_name" name="customer_name" required>
@@ -138,7 +137,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <select class="form-select product-select" name="stock_id[]" required>
                             <option value="">Select Product</option>
                             <?php foreach ($medicinesData as $medicine) : ?>
-                                <option value="<?= htmlspecialchars($medicine['stock_id']) ?>" data-price="<?= htmlspecialchars($medicine['sale_price']) ?>" data-product-name="<?= htmlspecialchars($medicine['product_name']) ?>" data-quantity="<?= htmlspecialchars($medicine['quantity']) ?>">
+                                <option value="<?= htmlspecialchars($medicine['stock_id']) ?>"
+                                        data-price="<?= htmlspecialchars($medicine['sale_price']) ?>"
+                                        data-product-name="<?= htmlspecialchars($medicine['product_name']) ?>"
+                                        data-quantity="<?= htmlspecialchars($medicine['quantity']) ?>">
                                     <?= htmlspecialchars($medicine['product_name']) ?> (Stock: <?= htmlspecialchars($medicine['quantity']) ?>)
                                 </option>
                             <?php endforeach; ?>
@@ -184,7 +186,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const productList = $('#product-list');
             const grandTotalInput = $('#grand-total-input');
 
-            // Function to update the total for a single row
             function updateRowTotal(row) {
                 const quantity = parseFloat(row.find('.quantity-input').val()) || 0;
                 const unitPrice = parseFloat(row.find('.unit-price-input').val()) || 0;
@@ -193,7 +194,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 updateGrandTotal();
             }
 
-            // Function to update the grand total of the entire form
             function updateGrandTotal() {
                 let grandTotal = 0;
                 $('.sale-item-row').each(function() {
@@ -203,7 +203,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 grandTotalInput.val(grandTotal.toFixed(2));
             }
 
-            // Event listener for product selection changes
             productList.on('change', '.product-select', function() {
                 const selectedOption = $(this).find('option:selected');
                 const unitPrice = selectedOption.data('price');
@@ -215,18 +214,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 updateRowTotal(row);
             });
 
-            // Event listener for quantity changes
             productList.on('input', '.quantity-input', function() {
                 const row = $(this).closest('.sale-item-row');
                 updateRowTotal(row);
             });
 
-            // Event listener for removing a product row
             productList.on('click', '.remove-row', function() {
                 if ($('.sale-item-row').length > 1) {
                     $(this).closest('.sale-item-row').remove();
                 } else {
-                    // Clear the row if it's the last one
                     const row = $(this).closest('.sale-item-row');
                     row.find('.product-select').val('');
                     row.find('.quantity-input').val(1);
@@ -237,7 +233,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 updateGrandTotal();
             });
 
-            // Event listener for adding a new product row
             $('#add-product-row').on('click', function() {
                 const newRow = $('.sale-item-row').first().clone();
                 newRow.find('.product-select').val('');
@@ -250,10 +245,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 updateGrandTotal();
             });
 
-            // Initial calculation on page load
             updateGrandTotal();
         });
     </script>
 </body>
-
 </html>
