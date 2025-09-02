@@ -2,19 +2,14 @@
 // Include the database connection file.
 include_once __DIR__ . '/../../config.php';
 
-// SQL query to fetch inventory data, including the most recent purchase price.
-// The purchase price is fetched from the purchase_items table, as it is not in the products table.
+// SQL query to fetch inventory data directly from the 'stock' table.
+// The query is simplified to use the 'purchase_price' and 'sale_price' columns
+// that are already present in the 'stock' table, as per the database schema.
 $sql = "SELECT
             p.product_name,
             c.category_name,
-            (
-                SELECT pi.unit_price
-                FROM purchase_items AS pi
-                WHERE pi.stock_id = s.id
-                ORDER BY pi.created_at DESC
-                LIMIT 1
-            ) AS purchase_price,
-            p.selling_price,
+            s.purchase_price,
+            s.sale_price,
             s.quantity AS stock_quantity,
             s.expiry_date
         FROM
@@ -53,7 +48,7 @@ if (!$result) {
 <div class="container-fluid">
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Current Inventory</h3>
+            <h3 class="card-title">All Products in Stock</h3>
         </div>
         <div class="card-body">
             <table id="inventoryTable" class="table table-bordered table-striped">
@@ -73,8 +68,8 @@ if (!$result) {
                             <tr>
                                 <td><?= htmlspecialchars($row['product_name']) ?></td>
                                 <td><?= htmlspecialchars($row['category_name']) ?></td>
-                                <td>$<?= number_format($row['purchase_price'], 2) ?></td>
-                                <td>$<?= number_format($row['selling_price'], 2) ?></td>
+                                <td><?= htmlspecialchars($row['purchase_price']) ?></td>
+                                <td><?= htmlspecialchars($row['sale_price']) ?></td>
                                 <td><?= htmlspecialchars($row['stock_quantity']) ?></td>
                                 <td><?= htmlspecialchars($row['expiry_date']) ?></td>
                             </tr>

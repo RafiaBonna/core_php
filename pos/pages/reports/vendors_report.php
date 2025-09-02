@@ -3,8 +3,8 @@
 include_once __DIR__ . '/../../config.php';
 
 // SQL query to fetch all vendor data.
-// Corrected the column name from `vendor_name` to `name`.
-$sql = "SELECT id, name, contact_person, email, phone_number, address FROM vendors ORDER BY name ASC";
+
+$sql = "SELECT id, name FROM vendors ORDER BY name ASC";
 $result = $conn->query($sql);
 
 if (!$result) {
@@ -39,10 +39,7 @@ if (!$result) {
                     <tr>
                         <th>ID</th>
                         <th>Vendor Name</th>
-                        <th>Contact Person</th>
-                        <th>Email</th>
-                        <th>Phone Number</th>
-                        <th>Address</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -51,15 +48,13 @@ if (!$result) {
                             <tr>
                                 <td><?= htmlspecialchars($row['id']) ?></td>
                                 <td><?= htmlspecialchars($row['name']) ?></td>
-                                <td><?= htmlspecialchars($row['contact_person']) ?></td>
-                                <td><?= htmlspecialchars($row['email']) ?></td>
-                                <td><?= htmlspecialchars($row['phone_number']) ?></td>
-                                <td><?= htmlspecialchars($row['address']) ?></td>
+                              
+                                
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="6" class="text-center">No vendors found.</td>
+                            <td colspan="7" class="text-center">No vendors found.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
